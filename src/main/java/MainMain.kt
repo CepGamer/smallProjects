@@ -1,0 +1,5 @@
+class MainMain {
+    fun main() {
+
+    }
+}
