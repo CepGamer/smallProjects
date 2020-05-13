@@ -4,15 +4,22 @@ val scanner = Scanner(System.`in`)
 
 fun main() {
     scanner.apply {
-        val n = nextInt()
+        val t = nextInt()
 
-        for (i in 1..n) {
-            val c = nextInt()
-            val half = c / 2
-            var s = 0
-            for (j in 1..half)
-                s += 1 shl j
-            println(s)
+        for (i in 1..t) {
+            val n = nextInt()
+            if (n % 4 != 0) {
+                println("NO")
+            } else {
+                println("YES")
+                for (j in 1..(n / 2)) {
+                    print("${j * 2} ")
+                }
+                for (k in 1 until n / 2) {
+                    print("${k * 2 - 1} ")
+                }
+                println("${n + n / 2 - 1}")
+            }
         }
     }
 }
