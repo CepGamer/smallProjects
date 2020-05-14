@@ -23,9 +23,16 @@ fun main() {
         val arr = LongArray(size)
         fill(arr)
         val t = nextInt()
-        for (testCase in 1..t) {
+        for (TEST in 1..t) {
             val n = nextInt()
-            println(arr[n - 1])
+            val m = nextInt()
+            if (n == 1) {
+                println(0)
+            } else if (n == 2) {
+                println(m)
+            } else {
+                println("${m * 2}")
+            }
         }
     }
 }

@@ -1,32 +1,77 @@
 import java.util.*
-import kotlin.math.max
 
 private val scanner = Scanner(System.`in`)
+private val size = 2 * 100_000 + 10
 
 fun A() {
     scanner.apply {
-        val arr = IntArray(40)
-        val brr = IntArray(40)
+        val arr = IntArray(size)
+        val subarrs = TreeMap<Int, TreeMap<Int, Int>>()
         val t = nextInt()
-        for (i in 1..t) {
-            for (j in 0 until 40) {
-                arr[j] = 0
-                brr[j] = 0
-            }
+        for (TEST in 1..t) {
             val n = nextInt()
-            val k = nextInt()
-            for (j in 0 until n) {
-                arr[j] = nextInt()
+            for (i in 0 until n) {
+                arr[i] = 0
             }
-            for (j in 0 until n) {
-                brr[j] = nextInt()
+            subarrs[n] = TreeMap()
+            subarrs[n]?.set(1, n)
+            var action = 1
+            while (subarrs.isNotEmpty()) {
+                val largestArrs = subarrs[subarrs.lastKey()]!!
+                val firstArr = largestArrs.firstEntry()
+                largestArrs.remove(firstArr.key)
+                if (largestArrs.isEmpty()) {
+                    subarrs.remove(subarrs.lastKey())
+                }
+
+                val (l,r) = (firstArr.key to firstArr.value)
+                if ((r - l + 1) % 2 == 1) {
+                    arr[(l + r) / 2 - 1] = action
+                    val (ll, lr) = l to (l + r) / 2 - 1
+                    val (rl, rr) = (l + r) / 2 + 1 to r
+                    if (ll <= lr) {
+                        var tree = subarrs[lr - ll + 1]
+                        if (tree == null) {
+                            tree = TreeMap()
+                        }
+                        tree[ll] = lr
+                        subarrs[lr - ll + 1] = tree
+                    }
+                    if (rl <= rr) {
+                        var tree = subarrs[rr - rl + 1]
+                        if (tree == null) {
+                            tree = TreeMap()
+                        }
+                        tree[rl] = rr
+                        subarrs[rr - rl + 1] = tree
+                    }
+                } else {
+                    arr[(l + r - 1) / 2 - 1] = action
+                    val (ll, lr) = l to (l + r - 1) / 2 - 1
+                    val (rl, rr) = (l + r - 1) / 2 + 1 to r
+                    if (ll <= lr) {
+                        var tree = subarrs[lr - ll + 1]
+                        if (tree == null) {
+                            tree = TreeMap()
+                        }
+                        tree[ll] = lr
+                        subarrs[lr - ll + 1] = tree
+                    }
+                    if (rl <= rr) {
+                        var tree = subarrs[rr - rl + 1]
+                        if (tree == null) {
+                            tree = TreeMap()
+                        }
+                        tree[rl] = rr
+                        subarrs[rr - rl + 1] = tree
+                    }
+                }
+                action++
             }
-            arr.sortDescending()
-            brr.sortDescending()
-            for (j in 0 until k) {
-                arr[n - j - 1] = max(brr[j], arr[n - j - 1])
+            for (i in 0 until n) {
+                print("${arr[i]} ")
             }
-            println(arr.sum())
+            println()
         }
     }
 }
