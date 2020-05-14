@@ -1,38 +1,49 @@
+import java.lang.StringBuilder
 import java.util.*
+import kotlin.math.min
 
 private val scanner = Scanner(System.`in`)
-private val size = 5 * 100_000 + 10
-fun fill(arr: LongArray) {
-    arr[0] = 0
-    arr[1] = 3
-    arr[2] = 8
-    arr[3] = 24
-    for (ii in 4 until size) {
-        val i = ii.toLong()
-        val count = (i + 1)
-        if (count % 2L == 1L) {
-            arr[ii] = (arr[ii - 2] - arr[ii - 4]) + arr[ii - 2] + 4L + (count - 4) * 4L + 8L * i / 2
-        } else {
-            arr[ii] = (arr[ii - 2] - arr[ii - 4]) + arr[ii - 2] + 4L + (count - 4) * 4L + 8L * count / 2
+private val size = 1_000_000 + 10
+
+fun solve(str: String, ones: Int): Int {
+    var res = ones
+    val dp = IntArray(str.length)
+    var pref = 0
+    for (i in str.indices) {
+        val char = str[i].toInt() - '0'.toInt()
+        pref += char
+        dp[i] = 1 - char
+        if (i > 0) {
+            dp[i] = dp[i] + min(dp[i - 1], pref - char)
         }
+        res = min(res, dp[i] + ones - pref)
     }
+
+    return res
 }
 
 fun main() {
     scanner.apply {
-        val arr = LongArray(size)
-        fill(arr)
+        val arr = IntArray(size)
         val t = nextInt()
         for (TEST in 1..t) {
             val n = nextInt()
-            val m = nextInt()
-            if (n == 1) {
-                println(0)
-            } else if (n == 2) {
-                println(m)
-            } else {
-                println("${m * 2}")
+            val k = nextInt()
+            val sums = ArrayList<StringBuilder>(k)
+            val s = next()
+            for (i in 0 until k) {
+                sums.add(StringBuilder(s[i].toString()))
             }
+            for (index in k until n) {
+                sums[index % k].append(s[index])
+            }
+            var min = 1000000000
+            val allOnes = s.count { it == '1' }
+            for (str in sums.map { it.toString() }) {
+                val ones = str.count { it == '1' }
+                min = min(min, solve(str, ones) + allOnes - ones)
+            }
+            println(min)
         }
     }
 }
