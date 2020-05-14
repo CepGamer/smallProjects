@@ -2,7 +2,7 @@ import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashSet
 
-val scanner = Scanner(System.`in`)
+private val scanner = Scanner(System.`in`)
 
 fun main() {
     val arr = IntArray(10000)
