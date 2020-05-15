@@ -1,6 +1,6 @@
 object Main {
     @JvmStatic
     fun main(args: Array<String>) {
-        B()
+        println(SadJavaClass().solve(readLine()?.toInt() ?: 5))
     }
 }
