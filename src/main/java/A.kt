@@ -4,27 +4,26 @@ import kotlin.math.max
 private val scanner = Scanner(System.`in`)
 private val size = 100_000 + 10
 
-fun A() {
+fun gcd(a: Int, b: Int): Int =
+    if (b > 0)
+        gcd(b, a % b)
+    else
+        a
+
+fun main() {
     scanner.apply {
-        val t = nextInt()
-        for (TEST in 1..t) {
-            val arr = IntArray(size)
-            val f = IntArray(size)
-            val n = nextInt()
-            for (i in 1..n) {
-                arr[i] = nextInt()
-                f[i] = 1
+        val A = nextInt()
+        var sum = 0
+        for (base in 2 until A) {
+            var cursum = 0
+            var cura = A
+            while (cura > 0) {
+                cursum += cura % base
+                cura /= base
             }
-            for (i in 1..n) {
-                var j = i * 2
-                while (j <= n) {
-                    if (arr[i] < arr[j]) {
-                        f[j] = max(f[j], f[i] + 1)
-                    }
-                    j += i
-                }
-            }
-            println(f.max())
+            sum += cursum
         }
+        val gcd = gcd(sum, A - 2)
+        println("${sum/gcd}/${(A-2)/gcd}")
     }
 }
