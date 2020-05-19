@@ -1,28 +1,18 @@
 import java.util.ArrayList;
+import java.util.BitSet;
 import java.util.List;
 
 public class SadJavaClass {
-    public ArrayList<ArrayList<Integer>> solve(int A) {
-        final ArrayList<ArrayList<Integer>> result = new ArrayList<>();
-        if (A > 0)
+    public int repeatedNumber(final List<Integer> A) {
+        BitSet set = new BitSet(A.size() + 1);
+        for (int a : A)
         {
-            final ArrayList<Integer> row = new ArrayList<>();
-            row.add(1);
-            result.add(row);
-        }
-        for (int i = 1; i < A; i++)
-        {
-            final ArrayList<Integer> row = new ArrayList<>();
-            final ArrayList<Integer> prev = result.get(result.size() - 1);
-            row.add(1);
-            for (int j = 0; j < i - 1; j++)
+            if (set.get(a))
             {
-                row.add(prev.get(j) + prev.get(j + 1));
+                return a;
             }
-            row.add(1);
-            result.add(row);
+            set.set(a);
         }
-
-        return result;
+        return -1;
     }
 }
