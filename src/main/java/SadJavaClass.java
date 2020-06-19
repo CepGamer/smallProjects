@@ -1,35 +1,29 @@
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class SadJavaClass {
-    boolean isPrime(long a)
-    {
-        if (a % 2 == 0)
-        {
-            return false;
-        }
-        for (long i = 3; i * i <= a; i += 2)
-        {
-            if (a % i == 0)
-            {
-                return false;
-            }
-        }
-        return true;
-    }
+    public String largestNumber(final List<Integer> A) {
+        final StringBuilder res = new StringBuilder();
+        final List<String> strings = new ArrayList<>(A.size());
 
-    ArrayList<Integer> res(int a, int b)
-    {
-        return new ArrayList<>(Arrays.asList(a, b));
-    }
-
-    public ArrayList<Integer> primesum(int A) {
-        for (long i = 3; i < A / 2; i += 2)
-        {
-            if (isPrime(i) && isPrime(A - i))
-            {
-                return res((int)i, (int)(A - i));
-            }
+        boolean all0s = true;
+        for (int i : A) {
+            strings.add(Integer.toString(i));
+            all0s &= i == 0;
         }
-        return res(A / 2, A / 2);
+        if (all0s)
+            return "0";
+
+        strings.sort((o1, o2) -> {
+            String a = o1 + o2;
+            String b = o2 + o1;
+
+            return a.compareTo(b);
+        });
+        for (int i = strings.size() - 1; i >= 0; i--) {
+            res.append(strings.get(i));
+        }
+
+        return res.toString();
     }
 }
