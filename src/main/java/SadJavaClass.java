@@ -1,29 +1,17 @@
 import java.util.ArrayList;
-import java.util.List;
+import java.util.BitSet;
 
 public class SadJavaClass {
-    public String largestNumber(final List<Integer> A) {
-        final StringBuilder res = new StringBuilder();
-        final List<String> strings = new ArrayList<>(A.size());
-
-        boolean all0s = true;
-        for (int i : A) {
-            strings.add(Integer.toString(i));
-            all0s &= i == 0;
+    public int firstMissingPositive(ArrayList<Integer> A) {
+        BitSet set = new BitSet();
+        for (int a : A) {
+            if (a > 0)
+                set.set(a);
         }
-        if (all0s)
-            return "0";
-
-        strings.sort((o1, o2) -> {
-            String a = o1 + o2;
-            String b = o2 + o1;
-
-            return a.compareTo(b);
-        });
-        for (int i = strings.size() - 1; i >= 0; i--) {
-            res.append(strings.get(i));
+        for (int i = 1; i <= A.size() + 2; i++) {
+            if (!set.get(i))
+                return i;
         }
-
-        return res.toString();
+        return A.size() + 3;
     }
 }
