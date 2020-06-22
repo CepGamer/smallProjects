@@ -1,29 +1,44 @@
 import java.util.*
-import kotlin.math.max
 
 private val scanner = Scanner(System.`in`)
 private val size = 100_000 + 10
 
-fun gcd(a: Int, b: Int): Int =
-    if (b > 0)
-        gcd(b, a % b)
-    else
-        a
+fun IntArray.binarySearch(value: Int, from: Int, to: Int, valExtractor: (Int) -> Int): Int {
+    var l = from
+    var r = to
+    var m = (l + r) / 2
+    do {
+        if (value > valExtractor(m)) {
+            l = m
+        } else
+            r = m
+        m = (l + r) / 2
+    } while (l < r - 1)
+
+    return l
+}
 
 fun A() {
     scanner.apply {
-        val A = nextInt()
-        var sum = 0
-        for (base in 2 until A) {
-            var cursum = 0
-            var cura = A
-            while (cura > 0) {
-                cursum += cura % base
-                cura /= base
-            }
-            sum += cursum
+        val n = nextInt()
+        val arr = IntArray(size)
+        for (i in 0 until n) {
+            arr[i] = nextInt()
         }
-        val gcd = gcd(sum, A - 2)
-        println("${sum/gcd}/${(A-2)/gcd}")
+        val brr = IntArray(size, init = { i -> 1000_000_000 + 10 })
+
+        brr[n - 1] = n - 1
+        for (i in (n - 2) downTo 0) {
+            brr[i] =
+                if (arr[i] < arr[brr[i + 1]]) {
+                    i
+                } else {
+                    brr[i + 1]
+                }
+        }
+        for (i in 0 until n) {
+            val nextYoung = brr.binarySearch(arr[i], i, n) { i -> arr[brr[i]] }
+            print("${nextYoung - i - 1} ")
+        }
     }
 }
