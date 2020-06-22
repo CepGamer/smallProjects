@@ -10,7 +10,7 @@ fun gcd(a: Int, b: Int): Int =
     else
         a
 
-fun main() {
+fun A() {
     scanner.apply {
         val A = nextInt()
         var sum = 0
