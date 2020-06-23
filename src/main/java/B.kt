@@ -1,4 +1,6 @@
 import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
 private val scanner = Scanner(System.`in`)
 
@@ -8,33 +10,57 @@ fun printResult(n: Int) {
 
 fun B() {
     scanner.apply {
-        val heading = next()
-        val text = next()
-        val letters = Array(init = { ArrayList<Int>() }, size = 26 + 1)
-        heading.forEachIndexed { i, c ->
-            letters[c - 'a'].add(i)
+        val n = nextInt()
+        val names = ArrayList<String>()
+        val m = nextInt()
+        for (i in 1..n) {
+            names.add(next())
         }
-        var hCount = 0
-        var index = heading.length
-        for (c in text) {
-            if (letters[c - 'a'].isEmpty()) {
-                return printResult(-1)
-            }
-            var insertionIndex = letters[c - 'a'].binarySearch(index)
-            if (-(insertionIndex + 1) >= letters[c - 'a'].size) {
-                insertionIndex = 0
-                hCount++
-            }
-            var newIndex = -1
-            newIndex = if (insertionIndex >= 0) {
-                letters[c - 'a'][insertionIndex]
-            } else {
-                letters[c - 'a'][-insertionIndex - 1]
-            }
+        val beef = HashMap<String, ArrayList<String>>()
+        for (name in names) {
+            beef[name] = ArrayList()
+        }
+        for (i in 1..m) {
+            val l = next()
+            val r = next()
+            beef[l]?.add(r)
+            beef[r]?.add(l)
+        }
+        var max = 0
+        var maxi = 0
+        for (i in 1..(2 shl n - 1)) {
+            val enabled = BitSet.valueOf(longArrayOf(i.toLong()))
+            val res = names.foldIndexed(false) { index, x, s ->
+                if (x || !enabled.get(index))
+                    return@foldIndexed x
+                names.forEachIndexed { i, name ->
+                    if (enabled.get(i) && beef[s]?.contains(name) == true) {
+                        return@foldIndexed true
+                    }
+                }
 
-            index = newIndex + 1
+                false
+            }
+            if (res)
+                continue
+
+            if (enabled.cardinality() > max) {
+                max = enabled.cardinality()
+                maxi = i
+            }
         }
 
-        return printResult(hCount)
+        println(max)
+        val enabled = BitSet.valueOf(longArrayOf(maxi.toLong()))
+        val resNames = ArrayList<String>()
+        names.forEachIndexed { i, s ->
+            if (enabled.get(i)) {
+                resNames.add(s)
+            }
+        }
+        resNames.sort()
+        for (name in resNames) {
+            println(name)
+        }
     }
 }
