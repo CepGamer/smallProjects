@@ -1,20 +1,14 @@
+import java.util.ArrayList;
+
 public class SadJavaClass {
-    public int isPalindrome(int A) {
-        long a = A;
-        if (a < 0)
-            return 0;
-        long l = 1;
-        while (a / l >= 10) {
-            l *= 10L;
+    public void arrange(ArrayList<Integer> a) {
+        final int n = a.size();
+        for (int i = 0; i < n; i++) {
+            int ai = a.get(i);
+            a.set(i, (a.get(ai) % n) * n + a.get(i));
         }
-        long r = 10L;
-        while (l >= r) {
-            if ((a / l) % 10L != (a % r) / (r / 10)) {
-                return 0;
-            }
-            l /= 10L;
-            r *= 10L;
+        for (int i = 0; i < n; i++) {
+            a.set(i, a.get(i) / n);
         }
-        return 1;
     }
 }
