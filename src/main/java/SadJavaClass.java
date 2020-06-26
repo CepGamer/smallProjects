@@ -1,15 +1,24 @@
 import java.util.ArrayList;
 
 public class SadJavaClass {
-    public ArrayList<ArrayList<Integer>> prettyPrint(int A) {
-        ArrayList<ArrayList<Integer>> res = new ArrayList<>();
-        for (int i = 1; i <= A * 2 - 1; i++) {
-            ArrayList<Integer> line = new ArrayList<>();
-            for (int j = 1; j <= A * 2 - 1; j++) {
-                line.add(Math.max(Math.abs(i - A), Math.abs(j - A)) + 1);
-            }
-            res.add(line);
+    public int uniquePaths(int A, int B) {
+        int min = Math.min(A, B);
+        int max = Math.max(A, B);
+
+        if (A == 0 || B == 0) {
+            return 1;
         }
-        return res;
+
+        ArrayList<Integer> line = new ArrayList<>(min);
+        for (int i = 0; i < min; i++) {
+            line.add(1);
+        }
+        for (int i = 1; i < max; i++) {
+            for (int j = 1; j < min; j++) {
+                line.set(j, line.get(j) + line.get(j - 1));
+            }
+        }
+
+        return line.get(line.size() - 1);
     }
 }

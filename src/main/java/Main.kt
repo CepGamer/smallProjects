@@ -18,8 +18,11 @@ object Main {
         when (whatToDo) {
             WhatToDo.JAVA ->
                 SadJavaClass().apply {
-                    println(prettyPrint(3))
-                    println(prettyPrint(4))
+                    println(uniquePaths(1, 1))
+                    println(uniquePaths(2, 2))
+                    println(uniquePaths(3, 3))
+                    println(uniquePaths(102, 1))
+                    println(uniquePaths(102, 2))
                 }
             WhatToDo.A ->
                 A()
