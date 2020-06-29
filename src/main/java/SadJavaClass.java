@@ -1,24 +1,27 @@
 import java.util.ArrayList;
+import java.util.BitSet;
 
 public class SadJavaClass {
-    public int uniquePaths(int A, int B) {
-        int min = Math.min(A, B);
-        int max = Math.max(A, B);
-
-        if (A == 0 || B == 0) {
-            return 1;
+    public int pow(int x, int n, int d) {
+        if (n == 0) {
+            return 1 % d;
         }
-
-        ArrayList<Integer> line = new ArrayList<>(min);
-        for (int i = 0; i < min; i++) {
-            line.add(1);
+        ArrayList<Integer> arr = new ArrayList<>(32);
+        arr.add(0, x % d);
+        for (int i = 1; i < 32; i++) {
+            long mul = ((long) arr.get(i - 1)) * ((long) arr.get(i - 1));
+            arr.add(i, (int) (mul % d));
         }
-        for (int i = 1; i < max; i++) {
-            for (int j = 1; j < min; j++) {
-                line.set(j, line.get(j) + line.get(j - 1));
+        int res = 0;
+        BitSet bits = BitSet.valueOf(new long[]{n});
+        for (int i = 0; i < 32; i++) {
+            if (bits.get(i)) {
+                res = (res + arr.get(i)) % d;
             }
         }
-
-        return line.get(line.size() - 1);
+        if (res < 0) {
+            res += d;
+        }
+        return res;
     }
 }

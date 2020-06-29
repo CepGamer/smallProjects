@@ -13,16 +13,14 @@ enum class WhatToDo {
 object Main {
     @JvmStatic
     fun main(args: Array<String>) {
-        val whatToDo = WhatToDo.A
+        val whatToDo = WhatToDo.JAVA
 
         when (whatToDo) {
             WhatToDo.JAVA ->
                 SadJavaClass().apply {
-                    println(uniquePaths(1, 1))
-                    println(uniquePaths(2, 2))
-                    println(uniquePaths(3, 3))
-                    println(uniquePaths(102, 1))
-                    println(uniquePaths(102, 2))
+                    println(pow(-1, 1, 20))
+                    println(pow(2, 9, 5))
+                    println(pow(71045970, 41535484, 64735492))
                 }
             WhatToDo.A -> {
                 val a = (1..3000).shuffled()
