@@ -13,7 +13,7 @@ enum class WhatToDo {
 object Main {
     @JvmStatic
     fun main(args: Array<String>) {
-        val whatToDo = WhatToDo.JAVA
+        val whatToDo = WhatToDo.A
 
         when (whatToDo) {
             WhatToDo.JAVA ->
@@ -24,8 +24,14 @@ object Main {
                     println(uniquePaths(102, 1))
                     println(uniquePaths(102, 2))
                 }
-            WhatToDo.A ->
+            WhatToDo.A -> {
+                val a = (1..3000).shuffled()
+                println(3000)
+                for (i in 0 until (3000 - 1)) {
+                    println("${a[i]} ${a[i + 1]}")
+                }
                 A()
+            }
             WhatToDo.B ->
                 B()
         }

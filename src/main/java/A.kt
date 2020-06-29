@@ -1,9 +1,12 @@
+import com.sun.org.apache.xpath.internal.operations.Bool
 import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.math.min
 
 private val scanner = Scanner(System.`in`)
 private val size = 100_000 + 10
 
-fun IntArray.binarySearch(value: Int, from: Int, to: Int, valExtractor: (Int) -> Int): Int {
+fun binarySearch(value: Int, from: Int, to: Int, valExtractor: (Int) -> Int): Int {
     var l = from
     var r = to
     var m = (l + r) / 2
@@ -18,27 +21,76 @@ fun IntArray.binarySearch(value: Int, from: Int, to: Int, valExtractor: (Int) ->
     return l
 }
 
+fun dfs(graph: Array<ArrayList<Int>>): List<Int> {
+    val visited = IntArray(graph.size)
+
+    var fixed = false
+
+    fun dfsInt(from: Int, to: Int): MutableList<Int> {
+        if (visited[to] == 1) {
+            visited[to] = 2
+            return mutableListOf(to)
+        } else if (visited[to] == 2) {
+            return mutableListOf()
+        }
+        visited[to] = 1
+        for (exit in graph[to]) {
+            if (exit == from) {
+                continue
+            }
+            val res = dfsInt(to, exit)
+            if (res.isNotEmpty()) {
+                if (visited[to] != 2 && !fixed) {
+                    res.add(to)
+                } else {
+                    fixed = true
+                }
+                return res
+            }
+        }
+        visited[to] = 2
+        return mutableListOf()
+    }
+
+    val res =  dfsInt(0, 0)
+    return res
+}
+
+fun bfs(queue: Queue<Int>, graph: Array<ArrayList<Int>>): IntArray {
+    val res = IntArray(graph.size) { 1_000_000 }
+    for (to in queue) {
+        res[to] = 0
+    }
+
+    while (queue.isNotEmpty()) {
+        val next = queue.poll()
+        for (exit in graph[next]) {
+            if (res[exit] > res[next] + 1) {
+                queue.add(exit)
+                res[exit] = res[next] + 1
+            }
+        }
+    }
+
+    return res
+}
+
 fun A() {
     scanner.apply {
         val n = nextInt()
-        val arr = IntArray(size)
+        val graph = Array(n) { ArrayList<Int>(0) }
         for (i in 0 until n) {
-            arr[i] = nextInt()
+            val a = nextInt()
+            val b = nextInt()
+            graph[a - 1].add(b - 1)
+            graph[b - 1].add(a - 1)
         }
-        val brr = IntArray(size, init = { i -> 1000_000_000 + 10 })
 
-        brr[n - 1] = n - 1
-        for (i in (n - 2) downTo 0) {
-            brr[i] =
-                if (arr[i] < arr[brr[i + 1]]) {
-                    i
-                } else {
-                    brr[i + 1]
-                }
-        }
-        for (i in 0 until n) {
-            val nextYoung = brr.binarySearch(arr[i], i, n) { i -> arr[brr[i]] }
-            print("${nextYoung - i - 1} ")
+        val loop = dfs(graph)
+        val res = bfs(ArrayDeque(loop), graph)
+
+        for (i in res) {
+            print("$i ")
         }
     }
 }
