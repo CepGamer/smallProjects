@@ -18,7 +18,6 @@ object Main {
         when (whatToDo) {
             WhatToDo.JAVA ->
                 SadJavaClass().apply {
-                    println(pow(-1, 1, 20))
                     println(pow(2, 9, 5))
                     println(pow(71045970, 41535484, 64735492))
                 }

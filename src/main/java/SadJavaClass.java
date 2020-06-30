@@ -6,22 +6,22 @@ public class SadJavaClass {
         if (n == 0) {
             return 1 % d;
         }
-        ArrayList<Integer> arr = new ArrayList<>(32);
-        arr.add(0, x % d);
+        ArrayList<Long> arr = new ArrayList<>(32);
+        arr.add(0, (long) (x % d));
         for (int i = 1; i < 32; i++) {
-            long mul = ((long) arr.get(i - 1)) * ((long) arr.get(i - 1));
-            arr.add(i, (int) (mul % d));
+            long mul = arr.get(i - 1) * (arr.get(i - 1));
+            arr.add(i, (mul % d));
         }
-        int res = 0;
+        long res = 1;
         BitSet bits = BitSet.valueOf(new long[]{n});
         for (int i = 0; i < 32; i++) {
             if (bits.get(i)) {
-                res = (res + arr.get(i)) % d;
+                res = (res * arr.get(i)) % d;
             }
         }
         if (res < 0) {
             res += d;
         }
-        return res;
+        return (int)res;
     }
 }
