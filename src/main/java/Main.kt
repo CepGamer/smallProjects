@@ -13,13 +13,13 @@ enum class WhatToDo {
 object Main {
     @JvmStatic
     fun main(args: Array<String>) {
-        val whatToDo = WhatToDo.B
+        val whatToDo = WhatToDo.JAVA
 
         when (whatToDo) {
             WhatToDo.JAVA ->
                 SadJavaClass().apply {
-                    println(pow(2, 9, 5))
-                    println(pow(71045970, 41535484, 64735492))
+                    println(trailingZeroes(5))
+                    println(trailingZeroes(25))
                 }
             WhatToDo.A -> {
                 A()
