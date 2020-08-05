@@ -18,8 +18,7 @@ object Main {
         when (whatToDo) {
             WhatToDo.JAVA ->
                 SadJavaClass().apply {
-                    println(trailingZeroes(5))
-                    println(trailingZeroes(25))
+                    println(compareVersion("1.0", "1.0.1"))
                 }
             WhatToDo.A -> {
                 A()
