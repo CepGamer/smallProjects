@@ -1,5 +1,4 @@
 import java.util.*
-import kotlin.math.max
 import kotlin.math.min
 
 private val scanner = Scanner(System.`in`)

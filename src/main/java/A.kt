@@ -1,8 +1,4 @@
-import com.sun.org.apache.xpath.internal.operations.Bool
 import java.util.*
-import kotlin.collections.ArrayList
-import kotlin.math.max
-import kotlin.math.min
 
 private val scanner = Scanner(System.`in`)
 private val size = 100_000 + 10
