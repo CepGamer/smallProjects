@@ -13,12 +13,11 @@ enum class WhatToDo {
 object Main {
     @JvmStatic
     fun main(args: Array<String>) {
-        val whatToDo = WhatToDo.JAVA
+        val whatToDo = WhatToDo.A
 
         when (whatToDo) {
             WhatToDo.JAVA ->
                 SadJavaClass().apply {
-                    println(compareVersion("1.0", "1.0.1"))
                 }
             WhatToDo.A -> {
                 A()
