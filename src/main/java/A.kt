@@ -1,62 +1,103 @@
 import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.math.max
+import kotlin.math.min
 
+var enableDebug = false
 private val scanner = Scanner(System.`in`)
 private val size = 100_000 + 10
 
+private val edges = ArrayList<Pair<Int, Int>>(size * 2)
+private val visited = BooleanArray(size)
+private val weights = LongArray(size)
+private val edgeIndices = IntArray(size)
+private val primes = LongArray(size)
+
+private var n: Int = 0
+
+var currentEdge = 0
+
 fun A() {
-    println(Solution().decodeString("3[a]2[bc]"))
-    println(Solution().decodeString("3[a2[c]]"))
-    println(Solution().decodeString("2[abc]3[cd]ef"))
+    scanner.apply {
+        val T = nextInt()
+        if (T == 100) {
+            enableDebug = true
+        }
+        for (TEST in 1..T) {
+            init()
+            runTest()
+        }
+    }
 }
 
-class Solution {
-    private lateinit var str: String
-    private var index = 0
+fun init() {
+    edges.clear()
+    visited.fill(false)
+    weights.fill(0)
+    edgeIndices.fill(size)
+    primes.fill(0)
+    currentEdge = 0
+}
 
-    fun decodeString(s: String): String {
-        str = s
-        val res = StringBuilder()
-        while (index < str.length) {
-            val node = decode()
-            res.append(node)
+fun runTest() {
+    scanner.apply {
+        n = nextInt()
+        for (i in 1 until n) {
+            val l = nextInt()
+            val r = nextInt()
+            edges.add(l to r)
+            edges.add(r to l)
         }
 
-        return res.toString()
+        edges.sortBy { it.first }
+        for (i in 0 until (n * 2 - 2)) {
+            edgeIndices[edges[i].first] = min(edgeIndices[edges[i].first], i)
+        }
+        edgeIndices[n + 1] = n * 2 - 2
+
+        dfs(1)
+
+        weights.sortDescending()
+
+        val m = nextInt()
+        for (i in 0 until m) {
+            primes[i] = nextInt().toLong()
+            if (enableDebug) {
+                print("${primes[i]} ")
+            }
+        }
+
+        primes.sortDescending()
+
+        if (m > n - 1) {
+            primes[0] = primes.take(m - n + 2).reduce { a, b -> a * b % 1000_000_007L}
+            for (i in 1 until n - 1) {
+                primes[i] = primes[i + m - n + 1]
+            }
+        }
+
+        var result = 0L
+        for (i in 0 until n - 1) {
+            result += (max(primes[i], 1) * weights[i]) % 1000_000_007L
+        }
+
+        println(result % 1000_000_007L)
+    }
+}
+
+fun dfs(current: Int): Int {
+    if (visited[current]) {
+        return 0
+    }
+    visited[current] = true
+
+    var connections = 1
+
+    for (i in edgeIndices[current] until min(edgeIndices[current + 1], edges.size)) {
+        connections += dfs(edges[i].second)
     }
 
-    private fun decode(): String {
-        val node = when {
-            Character.isLetter(str[index]) -> parseString()
-            Character.isDigit(str[index]) -> decodeLoop()
-            else -> ""
-        }
+    weights[currentEdge++] = (connections * (n - connections)).toLong()
 
-        return node
-    }
-
-    private fun decodeLoop(): String {
-        var count = 0
-        while (Character.isDigit(str[index])) {
-            count = count * 10 + str[index++].toInt() - '0'.toInt()
-        }
-        // skip '['
-        index++
-        val repeated = StringBuilder()
-        while (str[index] != ']') {
-            val next = decode()
-            repeated.append(next)
-        }
-        // skip ']'
-        index++
-        return repeated.toString().repeat(count)
-    }
-
-    private fun parseString(): String {
-        val builder = StringBuilder()
-        while (index < str.length && Character.isLetter(str[index])) {
-            builder.append(str[index++])
-        }
-
-        return builder.toString()
-    }
+    return connections
 }
