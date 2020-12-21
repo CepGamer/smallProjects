@@ -29,28 +29,62 @@ fun runTest() {
 }
 
 fun solve(line: String, x: Int, y: Int): Long {
-    var os = 0
-    var ones = 0
-    var questions = 0
+    var os = 0L
+    var ones = 0L
 
-    val maximize01s = x < y
+    val string: String
+    val w1: Long
+    val w2: Long
 
-    val total0s = line.count {c -> c == '0'}
-    val total1s = line.count {c -> c == '1'}
-    val totalQuestions = line.count {c -> c == '?'}
+    if (x > y) {
+        string = line.replace('0', 'a').replace('1', '0').replace('a', '1')
+        w1 = y.toLong()
+        w2 = x.toLong()
+    } else {
+        string = line
+        w1 = x.toLong()
+        w2 = y.toLong()
+    }
 
-    var minRes = x.toLong() * line.length + y.toLong() * line.length
+    val total0s = string.count { c -> c == '0' }.toLong()
+    val totalQuestions = string.count { c -> c == '?' }.toLong()
+    val total1s = string.count { c -> c == '1' }.toLong() + totalQuestions
 
-    for (i in 0 until line.length) {
-        val c = line[i]
+    // count sum
+    var sum = 0L
+    for (element in string) {
+        when (element) {
+            '1' -> {
+                ones++
+                sum += w1 * os
+            }
+            '0' -> {
+                os++
+                sum += w2 * ones
+            }
+            '?' -> {
+                ones++
+                sum += w1 * os
+            }
+        }
+    }
+
+    var minRes = sum
+    ones = 0L
+    os = 0L
+    var qs = 0L
+    for (c in string) {
         when (c) {
             '1' -> ones++
             '0' -> os++
-            '?' -> questions++
+            '?' -> {
+                sum -= w1 * (os + qs) + w2 * (total0s - os)
+                sum += w1 * (total1s - ones - 1L - qs) + w2 * ones
+                qs++
+
+                minRes = minOf(minRes, sum)
+            }
         }
-        minRes = arrayOf(
-            
-        ).min()
     }
 
     return minRes
