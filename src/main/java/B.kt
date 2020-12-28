@@ -1,8 +1,5 @@
 import java.util.*
-import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
 import kotlin.math.max
-import kotlin.math.min
 
 private val scanner = Scanner(System.`in`)
 private val size = 100_000 + 10
@@ -46,6 +43,17 @@ fun solveB(r: IntArray, b: IntArray): Int {
     var totMax = 0
     var i = 0
     var j = 0
+
+    val maxSubSumsR = IntArray(r.size)
+    val maxSubSumsB = IntArray(b.size)
+
+    for (i in (r.size - 1) downTo 0) {
+        maxSubSumsR[i] = totMax
+        curMax = max(0, curMax + r[i])
+    }
+
+    curMax = 0
+    totMax = 0
 
     while (true) {
         if (i >= r.size && j >= b.size) {

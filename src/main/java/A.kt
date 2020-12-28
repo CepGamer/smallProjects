@@ -9,7 +9,6 @@ private var n: Int = 0
 fun A() {
     scanner.apply {
         val T = nextInt()
-        nextLine()
         for (TEST in 1..T) {
             init()
             runTest()
@@ -22,15 +21,22 @@ fun init() {
 
 fun runTest() {
     scanner.apply {
-        val s = nextLine()
-        println(if (solve(s)) "YES" else "NO")
+        n = nextInt()
+        val k = nextInt()
+        val heights = IntArray(n)
+        for (i in 0 until n) {
+            heights[i] = nextInt()
+        }
+        println(solve(heights, k))
     }
 }
 
-fun solve(line: String): Boolean {
-    val posOp = line.indexOf('(')
-    val posCl = line.indexOf(')')
+fun solve(heights: IntArray, k: Int): Boolean {
+    val top = heights[0] + k
+    val bottom = heights[0]
+    for (i in 1 until heights.size) {
+        val height = heights[i]
 
-    return (line.length % 2 == 0
-            && posCl > 0 && posOp < (line.length - 1))
+    }
+    return false
 }
