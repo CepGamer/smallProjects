@@ -11,7 +11,7 @@ fun A() {
         val T = nextInt()
         for (TEST in 1..T) {
             init()
-            runTest()
+            runTest(TEST, T)
         }
     }
 }
@@ -19,7 +19,7 @@ fun A() {
 fun init() {
 }
 
-fun runTest() {
+fun runTest(test:Int, t: Int) {
     scanner.apply {
         n = nextInt()
         val k = nextInt()
@@ -27,21 +27,27 @@ fun runTest() {
         for (i in 0 until n) {
             heights[i] = nextInt()
         }
-        println(if (solve(heights, k)) "YES" else "NO")
+        val debug = false
+        if (!debug || t < 10000)
+            println(if (solve(heights, k)) "YES" else "NO")
+        else if (test > 454)
+            println("$n $k " + heights.joinToString(" "))
     }
 }
 
 fun solve(heights: IntArray, k: Int): Boolean {
-    var top = heights[0] + k - 1
+    var top = heights[0] + k
     var bottom = heights[0]
-    for (i in 1 until (heights.size - 1)) {
+    for (i in 1 until heights.size) {
         val height = heights[i]
-        top = (top).coerceAtMost(height + k - 1) + k - 1
+        if (top < bottom || bottom >= height + 2 * k - 1 || top <= height) {
+            return false
+        }
         bottom = (bottom - k + 1).coerceAtLeast(height)
-        if (top <= bottom) return false
+        top = (top - 1).coerceAtMost(height + k - 1) + k
     }
 
     val height = heights.last()
 
-    return top + k - 1 >= height && bottom - k + 1 <= height
+    return top > height && bottom - k + 1 <= height
 }
