@@ -36,7 +36,7 @@ fun solve(heights: IntArray, k: Int): Boolean {
     var bottom = heights[0]
     for (i in 1 until (heights.size - 1)) {
         val height = heights[i]
-        top = (top + k - 1).coerceAtMost(height + k - 1)
+        top = (top).coerceAtMost(height + k - 1) + k - 1
         bottom = (bottom - k + 1).coerceAtLeast(height)
         if (top <= bottom) return false
     }

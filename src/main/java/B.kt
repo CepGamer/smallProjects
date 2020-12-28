@@ -41,31 +41,9 @@ fun runTestB() {
 fun solveB(r: IntArray, b: IntArray): Int {
     var curMax = 0
     var totMax = 0
-    var i = 0
-    var j = 0
 
-    val maxSubSumsR = IntArray(r.size)
-    val maxSubSumsB = IntArray(b.size)
+    val rmax = r.fold(0 to 0) { acc, i -> max(acc.first, acc.second + i) to acc.second + i }.first
+    val bmax = b.fold(0 to 0) { acc, i -> max(acc.first, acc.second + i) to acc.second + i }.first
 
-    for (i in (r.size - 1) downTo 0) {
-        maxSubSumsR[i] = totMax
-        curMax = max(0, curMax + r[i])
-    }
-
-    curMax = 0
-    totMax = 0
-
-    while (true) {
-        if (i >= r.size && j >= b.size) {
-            return totMax
-        }
-        if (j >= b.size || r[i] > b[j]) {
-            curMax += r[i]
-            i++
-        } else {
-            curMax += b[j]
-            j++
-        }
-        totMax = max(totMax, curMax)
-    }
+    return rmax + bmax
 }
