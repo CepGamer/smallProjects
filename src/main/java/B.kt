@@ -11,7 +11,7 @@ private var n: Int = 0
 
 fun B() {
     scanner.apply {
-        val T = 1//nextInt()
+        val T = nextInt()
 
         for (TEST in 1..T) {
             initB()
@@ -26,64 +26,38 @@ fun initB() {
 fun runTestB() {
     scanner.apply {
         n = nextInt()
-        val m = nextLong()
-        nextLine()
-        val s = nextLine()
+        val r = IntArray(n)
+        for (i in 0 until n) {
+            r[i] = nextInt()
+        }
 
-        println(if (solveB(m.toLong(), s)) "Yes" else "No")
+        val m = nextInt()
+        val b = IntArray(m)
+        for (i in 0 until m) {
+            b[i] = nextInt()
+        }
+
+        println(solveB(r, b))
     }
 }
 
-fun solveB(number: Long, string: String): Boolean {
-    val digits = IntArray(26)
-    var res = 0L
+fun solveB(r: IntArray, b: IntArray): Int {
+    var curMax = 0
+    var totMax = 0
+    var i = 0
+    var j = 0
 
-    res += pow(2L, string[string.length - 1] - 'a')
-    res -= pow(2L, string[string.length - 2] - 'a')
-
-    if (string.length == 2) {
-        return res == number
-    }
-
-    for (c in string.substring(0, string.length - 2)) {
-        digits[c - 'a']++
-    }
-
-    for (i in 25 downTo 0) {
-        var x = digits[i]
-        while (x > 0) {
-            val value = pow(2L, i)
-            if (res > number) {
-                res -= value
-            } else {
-                res += value
-            }
-
-            x--
+    while (true) {
+        if (i >= r.size && j >= b.size) {
+            return totMax
         }
-    }
-
-    return res == number
-}
-
-fun pow(x: Long, deg: Int): Long {
-    var dg = deg
-    var res = x
-    var tail = 1L
-    if (deg == 0) {
-        return 1
-    } else if (deg == 1) {
-        return x
-    }
-
-    while (dg > 0) {
-        if (dg % 2L == 1L) {
-            tail *= res
+        if (j >= b.size || r[i] > b[j]) {
+            curMax += r[i]
+            i++
+        } else {
+            curMax += b[j]
+            j++
         }
-
-        res *= res
-        dg /= 2
+        totMax = max(totMax, curMax)
     }
-
-    return tail
 }
