@@ -15,7 +15,7 @@ enum class WhatToDo {
 object Main {
     @JvmStatic
     fun main(args: Array<String>) {
-        val whatToDo = WhatToDo.C
+        val whatToDo = WhatToDo.A
 
         when (whatToDo) {
             WhatToDo.JAVA ->
