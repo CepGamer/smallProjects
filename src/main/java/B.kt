@@ -1,9 +1,12 @@
 import java.util.*
+import kotlin.math.abs
 
 private val scanner = Scanner(System.`in`)
 private val size = 100_000 + 10
 
 private var n: Int = 0
+
+var debug = false
 
 fun B() {
     scanner.apply {
@@ -11,7 +14,7 @@ fun B() {
 
         for (TEST in 1..T) {
             initB()
-            runTestB()
+            runTestB(T, TEST)
         }
     }
 }
@@ -19,33 +22,46 @@ fun B() {
 fun initB() {
 }
 
-fun runTestB() {
+fun runTestB(T:Int, t: Int) {
     scanner.apply {
         n = nextInt()
         val k = nextInt()
-        val heights = IntArray(n)
-        for (i in 0 until n) {
-            heights[i] = nextInt()
-        }
-        println(if (solveB(heights, k)) "YES" else "NO")
+        nextLine()
+        val s = nextLine()
+        debug = debug// || T == 1 && n == 1000000 && k == 1000000
+        if (!debug)
+            println(solveB(s, k))
+        else if (debug)
+            println("${s.indexOf('0')}")
     }
 }
 
-fun solveB(heights: IntArray, k: Int): Boolean {
-    var lo = heights[0]
-    var ok = true
-    var hi = lo
-    for (j in 1 until n) {
-        val height = heights[j]
-        lo = Math.max(lo - k + 1, height)
-        hi = Math.min(hi + k - 1, height + k - 1)
-        if (lo > hi) {
-            ok = false
+fun solveB(str: String, k: Int): String {
+    val digiValues = str.map { c -> c - '0' }.toIntArray()
+    var cur = 0
+    val start = 0
+    var last0 = -1000000
+    for (i in 0 until k.coerceAtMost(20)) {
+        cur += (1 - digiValues[start + k.coerceAtMost(20) - 1 - i]) shl i
+        last0 = if (str[i] == '0') i else last0
+    }
+    val set = mutableSetOf<Int>()
+    if (k <= 20) {
+        set.add(cur)
+    }
+    for (i in k.coerceAtMost(20) until str.length) {
+        cur = (1 - digiValues[i] + (cur shl 1)) and ((1 shl k.coerceAtMost(20)) - 1)
+        last0 = if (str[i] == '0') i else last0
+        if (i >= (k - 1) && !(cur == 0 && abs(i + 1 - last0) <= k)) {
+            set.add(cur)
         }
-        if (j == n - 1 && lo != height) {
-            ok = false
+    }
+    for (i in 0 until (1 shl k.coerceAtMost(20))) {
+        if (i !in set) {
+            return "YES\n" + "0".repeat((k - 20).coerceAtLeast(0)) +
+                    (i + (1 shl k.coerceAtMost(20))).toString(2).substring(1)
         }
     }
 
-    return ok
+    return "NO"
 }

@@ -1,5 +1,8 @@
+import java.io.BufferedReader
+import java.io.InputStreamReader
 import java.util.*
 import kotlin.math.max
+import kotlin.math.min
 import kotlin.math.roundToInt
 import kotlin.math.sqrt
 
@@ -24,60 +27,41 @@ fun initC() {
 
 fun runTestC() {
     scanner.apply {
-        n = nextInt()
         solveC()
         println()
     }
 }
 
 fun solveC() {
-    if (n == 3) {
-        print("2 3 2 3 2 ")
-        return
+    val jin = BufferedReader(InputStreamReader(System.`in`))
+    val out = StringBuilder()
+    val (n, k) = jin.readLine().split(" ").map { it.toInt() }
+    val s = listOf(0) + jin.readLine().map { it - '0' }
+    val sums = IntArray(n + 1)
+    for (j in 1..n) {
+        sums[j] = sums[j - 1] + s[j]
     }
-
-    val sqrtChain = ArrayList<Int>()
-    sqrtChain.add(n)
-
-    val sqrtSteps = ArrayList<ArrayList<Int>>()
-
-    while (true) {
-        val l = sqrtChain.last()
-        var sqrt = sqrt(l.toDouble()).roundToInt()
-
-        if (sqrt * sqrt < l) {
-            sqrt++
-        }
-        sqrtChain.add(sqrt)
-
-        val steps = ArrayList<Int>()
-        while (true) {
-            steps.add(l)
-            steps.add(sqrt)
-            if ((l / sqrt) == 0) {
-                break
-            }
-            steps.add(l)
-            steps.add(sqrt)
-
-            break
-        }
-        sqrtSteps.add(steps)
-
-        if (sqrt <= 2) {
-            break
+    var banned = mutableSetOf<Int>()
+    var curr = 0
+    for (e in 0 until min(20, k) - 1) {
+        curr += (1 - s[min(20, k) - 1 - e]) shl e
+    }
+    for (j in k..n) {
+        curr = ((curr shl 1) + (1 - s[j])) and ((1 shl min(20, k)) - 1)
+        if (k <= 20 || sums[n - 20] - sums[n - k] == k - 20) {
+            banned.add(curr)
         }
     }
-
-    print("${n + sqrtSteps.fold(0) { acc, arr -> acc + arr.size / 2 } - sqrtChain.size - 1} ")
-    for (i in 0 until (sqrtChain.size - 1)) {
-        val r = sqrtChain[i]
-        val l = sqrtChain[i + 1]
-        for (j in l until (r - 1)) {
-            print("${j + 1} ${j + 2} ")
+    if (k <= 20 && banned.size == 1 shl k) {
+        out.appendln("NO")
+    } else {
+        out.appendln("YES")
+        val answer = (0 until (1 shl min(20, k))).first { it !in banned }
+        if (k > 20) {
+            out.append("0".repeat(k - 20))
         }
-        for (step in sqrtSteps[i]) {
-            print("$step ")
-        }
+        out.appendln((answer + (1 shl min(20, k))).toString(2).substring(1))
     }
+
+    print(out)
 }
