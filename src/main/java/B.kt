@@ -51,10 +51,10 @@ fun solveB(str: String, k: Int): String {
     }
     for (i in k.coerceAtMost(20) until str.length) {
         cur = (1 - digiValues[i] + (cur shl 1)) and ((1 shl k.coerceAtMost(20)) - 1)
-        last0 = if (str[i] == '0') i else last0
-        if (i >= (k - 1) && !(cur == 0 && abs(i + 1 - last0) <= k)) {
+        if (i >= (k - 1) && !(cur == 1 - digiValues[i] && abs(i + 1 - last0) <= k)) {
             set.add(cur)
         }
+        last0 = if (str[i] == '0') i else last0
     }
     for (i in 0 until (1 shl k.coerceAtMost(20))) {
         if (i !in set) {
