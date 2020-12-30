@@ -25,6 +25,13 @@ fun C() {
 fun initC() {
 }
 
+fun findComponent(connected: IntArray, j: Int): Int {
+    if (connected[j] != connected[connected[j]]) {
+        connected[j] = findComponent(connected, connected[j])
+    }
+    return connected[j]
+}
+
 fun runTestC() {
     scanner.apply {
         val n = nextInt()
@@ -38,13 +45,10 @@ fun runTestC() {
             val k = nextInt()
             val m1 = nextInt()
             val m2 = if (k == 2) nextInt() else 0
-            if (connected[m1] != connected[m2]) {
-                var j = m2
-                while (connected[j] != connected[m1]) {
-                    val x = connected[j]
-                    connected[j] = connected[m1]
-                    j = x
-                }
+            val a = findComponent(connected, connected[m1])
+            val b = findComponent(connected, connected[m2])
+            if (a != b) {
+                connected[a] = b
                 res.add(i)
             }
         }
