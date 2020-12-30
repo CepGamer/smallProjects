@@ -25,12 +25,16 @@ fun runTestB(T: Int, t: Int) {
     scanner.apply {
         n = nextInt()
         val modulo = 1_000_000_000L + 7L
-        val bitsCount = LongArray(63)
+        val bitsCount = LongArray(60)
+        val pow = LongArray(60) { 1 }
+        for (i in 1..59) {
+            pow[i] = pow[i - 1] * 2L % modulo
+        }
         val vals = LongArray(n)
         for (i in 0 until n) {
             val x = nextLong()
             vals[i] = x
-            for (j in 0..62) {
+            for (j in 0..59) {
                 bitsCount[j] += if (x and (1L shl j) != 0L) 1L else 0L
             }
         }
@@ -40,15 +44,15 @@ fun runTestB(T: Int, t: Int) {
             var sumOr = 0L
             var sumAnd = 0L
             val x = vals[i]
-            for (j in 0..62) {
+            for (j in 0..59) {
                 if (x and (1L shl j) != 0L) {
-                    sumAnd += ((1L shl j) * bitsCount[j])
-                    sumOr += ((1L shl j) * n)
+                    sumAnd = (sumAnd + (pow[j]) * bitsCount[j]) % modulo
+                    sumOr = (sumOr + (pow[j]) * n) % modulo
                 } else {
-                    sumOr += ((1L shl j) * bitsCount[j])
+                    sumOr = (sumOr + (pow[j]) * bitsCount[j]) % modulo
                 }
             }
-            res = (res + (sumAnd % modulo) * (sumOr % modulo)) % modulo
+            res = (res + (sumAnd * sumOr)) % modulo
         }
 
         println(res)

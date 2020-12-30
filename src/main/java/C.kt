@@ -1,17 +1,20 @@
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.util.*
+import kotlin.collections.ArrayDeque
+import kotlin.collections.ArrayList
 import kotlin.math.*
 
 private val scanner = Scanner(System.`in`)
 private val size = 100_000 + 10
 
+val modulo = 1_000_000_000L + 7L
+
 private var n: Int = 0
 
 fun C() {
     scanner.apply {
-        val T = nextInt()
-        nextLine()
+        val T = 1//nextInt()
         for (TEST in 1..T) {
             initC()
             runTestC()
@@ -24,43 +27,36 @@ fun initC() {
 
 fun runTestC() {
     scanner.apply {
-        val s = nextLine()
-        println(solveC(s))
+        val n = nextInt()
+        val m = nextInt()
+
+        val connected = IntArray(m + 1) { it }
+        val res = ArrayList<Int>(n)
+        var curGroup = 0
+
+        for (i in 1..n) {
+            val k = nextInt()
+            val m1 = nextInt()
+            val m2 = if (k == 2) nextInt() else 0
+            if (connected[m1] != connected[m2]) {
+                var j = m2
+                while (connected[j] != connected[m1]) {
+                    val x = connected[j]
+                    connected[j] = connected[m1]
+                    j = x
+                }
+                res.add(i)
+            }
+        }
+        var resNum = 1L
+        for (i in 1..res.size) {
+            resNum = (2L * resNum) % modulo
+        }
+
+        println("$resNum ${res.size}")
+        println(res.joinToString(" "))
     }
 }
 
-fun solveC(str: String): Int {
-    val locations = IntArray(26)
-    locations.fill(-10)
-    val digitizedString = str.map { it - 'a' }
-    var res = 0
-    if (digitizedString.size == 1) {
-        return 0
-    }
-    locations[digitizedString[0]] = 0
-    for (i in 1 until digitizedString.size) {
-        var c = digitizedString[i]
-        val old = locations[c]
-        val oldI = c
-        if (i - locations[c] <= 2) {
-            res++
-
-            for (j in 0 until 26) {
-                if (abs(i - locations[j]) <= 2) {
-                    continue
-                }
-                if (i + 1 < digitizedString.size && digitizedString[i + 1] == j) {
-                    continue
-                }
-                if (i + 2 < digitizedString.size && digitizedString[i + 2] == j) {
-                    continue
-                }
-                c = j
-            }
-        }
-        locations[oldI] = old
-        locations[c] = i
-    }
-
-    return res
+fun solveC(str: String) {
 }
