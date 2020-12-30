@@ -1,7 +1,6 @@
 import java.util.*
+import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
-import kotlin.collections.HashSet
-import kotlin.math.abs
 
 var enableDebug = false
 private val scanner = Scanner(System.`in`)
@@ -26,24 +25,35 @@ fun runTest(test:Int, t: Int) {
     scanner.apply {
         n = nextInt()
         val weights = IntArray(n)
+        val used = BooleanArray(n)
+        val queue = PriorityQueue<Int>(n)
+        var sum = 0L
         for (i in 0 until n) {
-            weights[i] = nextInt()
+            weights[i] = Int.MAX_VALUE - nextInt()
+            sum += Int.MAX_VALUE - weights[i]
         }
-        val edges = HashMap<Int, ArrayList<Int>>()
         for (i in 0 until (n - 1)) {
-            val u = nextInt()
-            val v = nextInt()
-
-            if (!edges.containsKey(u)) {
-                edges[u] = ArrayList()
+            val u = nextInt() - 1
+            val v = nextInt() - 1
+            if (used[u]) {
+                queue.add(weights[u])
             }
-            edges[u]!!.add(v)
-
-            if (!edges.containsKey(v)) {
-                edges[v] = ArrayList()
+            if (used[v]) {
+                queue.add(weights[v])
             }
-            edges[v]!!.add(u)
+            used[u] = true
+            used[v] = true
         }
+
+        print("$sum ")
+
+        while (queue.isNotEmpty()) {
+            val x = queue.remove()
+            sum += (Int.MAX_VALUE - x)
+            print("$sum ")
+        }
+
+        println()
     }
 }
 

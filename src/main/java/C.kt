@@ -36,12 +36,9 @@ fun solveC(str: String): Int {
     var res = 0
     if (digitizedString.size == 1) {
         return 0
-    } else if (digitizedString.size == 2 && digitizedString[0] == digitizedString[1]) {
-        return 1
     }
     locations[digitizedString[0]] = 0
-    locations[digitizedString[1]] = 1
-    for (i in 2 until digitizedString.size) {
+    for (i in 1 until digitizedString.size) {
         var c = digitizedString[i]
         val old = locations[c]
         val oldI = c
