@@ -1,4 +1,6 @@
 import java.util.*
+import kotlin.collections.HashSet
+import kotlin.math.abs
 
 var enableDebug = false
 private val scanner = Scanner(System.`in`)
@@ -22,32 +24,20 @@ fun init() {
 fun runTest(test:Int, t: Int) {
     scanner.apply {
         n = nextInt()
-        val k = nextInt()
-        val heights = IntArray(n)
-        for (i in 0 until n) {
-            heights[i] = nextInt()
+        val squares = HashSet<Int>()
+        val points = HashSet<Int>()
+        for (i in 1..n) {
+            val x = nextInt()
+            for (point in points) {
+                squares.add(abs(x - point))
+            }
+
+            points.add(x)
         }
-        val debug = false
-        if (!debug || t < 10000)
-            println(if (solve(heights, k)) "YES" else "NO")
-        else if (test > 454)
-            println("$n $k " + heights.joinToString(" "))
+
+        println(squares.size)
     }
 }
 
-fun solve(heights: IntArray, k: Int): Boolean {
-    var top = heights[0] + k
-    var bottom = heights[0]
-    for (i in 1 until heights.size) {
-        val height = heights[i]
-        if (top < bottom || bottom >= height + 2 * k - 1 || top <= height) {
-            return false
-        }
-        bottom = (bottom - k + 1).coerceAtLeast(height)
-        top = (top - 1).coerceAtMost(height + k - 1) + k
-    }
-
-    val height = heights.last()
-
-    return top > height && bottom - k + 1 <= height
+fun solve(heights: IntArray, k: Int) {
 }
