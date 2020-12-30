@@ -1,4 +1,5 @@
 import java.util.*
+import kotlin.collections.HashMap
 import kotlin.collections.HashSet
 import kotlin.math.abs
 
@@ -24,18 +25,25 @@ fun init() {
 fun runTest(test:Int, t: Int) {
     scanner.apply {
         n = nextInt()
-        val squares = HashSet<Int>()
-        val points = HashSet<Int>()
-        for (i in 1..n) {
-            val x = nextInt()
-            for (point in points) {
-                squares.add(abs(x - point))
-            }
-
-            points.add(x)
+        val weights = IntArray(n)
+        for (i in 0 until n) {
+            weights[i] = nextInt()
         }
+        val edges = HashMap<Int, ArrayList<Int>>()
+        for (i in 0 until (n - 1)) {
+            val u = nextInt()
+            val v = nextInt()
 
-        println(squares.size)
+            if (!edges.containsKey(u)) {
+                edges[u] = ArrayList()
+            }
+            edges[u]!!.add(v)
+
+            if (!edges.containsKey(v)) {
+                edges[v] = ArrayList()
+            }
+            edges[v]!!.add(u)
+        }
     }
 }
 
