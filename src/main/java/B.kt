@@ -1,6 +1,4 @@
 import java.util.*
-import kotlin.collections.HashSet
-import kotlin.math.abs
 
 private val scanner = Scanner(System.`in`)
 private val size = 100_000 + 10
@@ -26,24 +24,34 @@ fun initB() {
 fun runTestB(T: Int, t: Int) {
     scanner.apply {
         n = nextInt()
-        val notes = IntArray(n)
+        val modulo = 1_000_000_000L + 7L
+        val bitsCount = LongArray(63)
+        val vals = LongArray(n)
         for (i in 0 until n) {
-            notes[i] = nextInt()
-        }
-
-        var lastAdded = notes[0]
-        var res = 1
-        for (i in 1 until (n)) {
-            if (notes[i] > lastAdded) {
-                res++
-                lastAdded = notes[i]
-            } else if (notes[i] + 1 != lastAdded) {
-                res++
-                lastAdded = notes[i] + 1
+            val x = nextLong()
+            vals[i] = x
+            for (j in 0..62) {
+                bitsCount[j] += if (x and (1L shl j) != 0L) 1L else 0L
             }
         }
 
-        println((res).coerceAtMost(n))
+        var res = 0L
+        for (i in 0 until n) {
+            var sumOr = 0L
+            var sumAnd = 0L
+            val x = vals[i]
+            for (j in 0..62) {
+                if (x and (1L shl j) != 0L) {
+                    sumAnd += ((1L shl j) * bitsCount[j])
+                    sumOr += ((1L shl j) * n)
+                } else {
+                    sumOr += ((1L shl j) * bitsCount[j])
+                }
+            }
+            res = (res + (sumAnd % modulo) * (sumOr % modulo)) % modulo
+        }
+
+        println(res)
     }
 }
 
