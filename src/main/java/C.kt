@@ -1,9 +1,4 @@
-import java.io.BufferedReader
-import java.io.InputStreamReader
 import java.util.*
-import kotlin.collections.ArrayDeque
-import kotlin.collections.ArrayList
-import kotlin.math.*
 
 private val scanner = Scanner(System.`in`)
 private val size = 100_000 + 10
@@ -14,7 +9,7 @@ private var n: Int = 0
 
 fun C() {
     scanner.apply {
-        val T = 1//nextInt()
+        val T = nextInt()
         for (TEST in 1..T) {
             initC()
             runTestC()
@@ -36,29 +31,41 @@ fun runTestC() {
     scanner.apply {
         val n = nextInt()
         val m = nextInt()
+        val costs = IntArray(n)
+        val presents = IntArray(m)
 
-        val connected = IntArray(m + 1) { it }
-        val res = ArrayList<Int>(n)
-        var curGroup = 0
+        for (i in 0 until n) {
+            costs[i] = nextInt()
+        }
 
-        for (i in 1..n) {
-            val k = nextInt()
-            val m1 = nextInt()
-            val m2 = if (k == 2) nextInt() else 0
-            val a = findComponent(connected, connected[m1])
-            val b = findComponent(connected, connected[m2])
-            if (a != b) {
-                connected[a] = b
-                res.add(i)
+        costs.sort()
+
+        for (i in 0 until m) {
+            presents[i] = nextInt()
+        }
+
+        var j = m - 1
+        var totalCost = 0L
+        for (i in (n - 1) downTo 1) {
+            val cur = costs[i]
+            val next = costs[i - 1]
+            while (j > 0 && cur > presents[j]) {
+                j--
             }
-        }
-        var resNum = 1L
-        for (i in 1..res.size) {
-            resNum = (2L * resNum) % modulo
+            while (j > 0 && cur <= presents[j] && presents[j] > next) {
+                j--
+            }
+            j++
+
+            totalCost += if (presents[j] > 0 && presents[j] < cur) {
+                presents[j] *= -1
+                -presents[j]
+            } else cur
         }
 
-        println("$resNum ${res.size}")
-        println(res.joinToString(" "))
+        val cost = if (presents[0] > 0 && presents[0] < costs[0]) presents[0] else costs[0]
+
+        println(cost)
     }
 }
 

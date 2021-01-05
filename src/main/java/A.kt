@@ -24,36 +24,17 @@ fun init() {
 fun runTest(test:Int, t: Int) {
     scanner.apply {
         n = nextInt()
-        val weights = IntArray(n)
-        val used = BooleanArray(n)
-        val queue = PriorityQueue<Int>(n)
-        var sum = 0L
+        val x = nextInt()
+        var sumDivided = 0
+        var totalSum = 0L
         for (i in 0 until n) {
-            weights[i] = Int.MAX_VALUE - nextInt()
-            sum += Int.MAX_VALUE - weights[i]
-        }
-        for (i in 0 until (n - 1)) {
-            val u = nextInt() - 1
-            val v = nextInt() - 1
-            if (used[u]) {
-                queue.add(weights[u])
-            }
-            if (used[v]) {
-                queue.add(weights[v])
-            }
-            used[u] = true
-            used[v] = true
+            val y = nextInt()
+            totalSum += y
+            val divRes = y / x + (if (y % x == 0) 0 else 1)
+            sumDivided += divRes
         }
 
-        print("$sum ")
-
-        while (queue.isNotEmpty()) {
-            val x = queue.remove()
-            sum += (Int.MAX_VALUE - x)
-            print("$sum ")
-        }
-
-        println()
+        println("${totalSum / x + (if (totalSum % x == 0L) 0 else 1)} $sumDivided")
     }
 }
 

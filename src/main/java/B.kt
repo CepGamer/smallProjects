@@ -1,4 +1,5 @@
 import java.util.*
+import kotlin.collections.ArrayList
 
 private val scanner = Scanner(System.`in`)
 private val size = 100_000 + 10
@@ -24,42 +25,38 @@ fun initB() {
 fun runTestB(T: Int, t: Int) {
     scanner.apply {
         n = nextInt()
-        val modulo = 1_000_000_000L + 7L
-        val bitsCount = LongArray(60)
-        val pow = LongArray(60) { 1 }
-        val bitsByPow = LongArray(60) { 1 }
-        for (i in 1..59) {
-            pow[i] = pow[i - 1] * 2L % modulo
-        }
-        val vals = LongArray(n)
-        for (i in 0 until n) {
-            val x = nextLong()
-            vals[i] = x
-            for (j in 0..59) {
-                bitsCount[j] += if (x and (1L shl j) != 0L) 1L else 0L
+        val x = nextInt()
+        var sum = 0L
+        val afterSum = ArrayList<Pair<Int, Int>>(10 * n)
+
+        var i = 0
+        var stopped = false
+        while (i < n) {
+            val num = nextInt()
+            if (!stopped && num % x == 0) {
+                afterSum.add(num / x to x)
+            } else {
+                stopped = true
             }
+
+            sum += num
+
+            i++
         }
 
-        for (i in 0..59) {
-            bitsByPow[i] = pow[i] * bitsCount[i]
-        }
-
-        var res = 0L
-        for (x in vals) {
-            var sumOr = 0L
-            var sumAnd = 0L
-            for (j in 0..59) {
-                if (x and (1L shl j) != 0L) {
-                    sumAnd = (sumAnd + bitsByPow[j]) % modulo
-                    sumOr = (sumOr + (pow[j]) * n) % modulo
-                } else {
-                    sumOr = (sumOr + bitsByPow[j]) % modulo
-                }
+        i = 0
+        while (i < afterSum.size) {
+            val (num, times) = afterSum[i]
+            sum += num * times
+            if (!stopped && num % x == 0) {
+                afterSum.add(num / x to times * x)
+            } else {
+                stopped = true
             }
-            res = (res + (sumAnd * sumOr)) % modulo
+            i++
         }
 
-        println(res)
+        println(sum)
     }
 }
 
