@@ -44,28 +44,16 @@ fun runTestC() {
             presents[i] = nextInt()
         }
 
-        var j = m - 1
+        var j = 0
         var totalCost = 0L
-        for (i in (n - 1) downTo 1) {
-            val cur = costs[i]
-            val next = costs[i - 1]
-            while (j > 0 && cur > presents[j]) {
-                j--
-            }
-            while (j > 0 && cur <= presents[j] && presents[j] > next) {
-                j--
-            }
-            j++
-
-            totalCost += if (presents[j] > 0 && presents[j] < cur) {
-                presents[j] *= -1
-                -presents[j]
+        for (i in (n - 1) downTo 0) {
+            val cur = presents[costs[i] - 1]
+            totalCost += if (j < costs[i]) {
+                presents[j++]
             } else cur
         }
 
-        val cost = if (presents[0] > 0 && presents[0] < costs[0]) presents[0] else costs[0]
-
-        println(cost)
+        println(totalCost)
     }
 }
 

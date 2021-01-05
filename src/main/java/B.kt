@@ -1,5 +1,4 @@
 import java.util.*
-import kotlin.collections.ArrayList
 
 private val scanner = Scanner(System.`in`)
 private val size = 100_000 + 10
@@ -27,36 +26,42 @@ fun runTestB(T: Int, t: Int) {
         n = nextInt()
         val x = nextInt()
         var sum = 0L
-        val afterSum = ArrayList<Pair<Int, Int>>(10 * n)
+        val array = IntArray(n)
 
         var i = 0
         var stopped = false
-        while (i < n) {
+        var multiple = 1
+        for (j in 0 until n) {
             val num = nextInt()
-            if (!stopped && num % x == 0) {
-                afterSum.add(num / x to x)
-            } else {
-                stopped = true
-            }
-
-            sum += num
-
-            i++
+            array[j] = num
         }
 
-        i = 0
-        while (i < afterSum.size) {
-            val (num, times) = afterSum[i]
-            sum += num * times
-            if (!stopped && num % x == 0) {
-                afterSum.add(num / x to times * x)
-            } else {
-                stopped = true
+        while (true) {
+            for (j in 0 until n) {
+                val num = array[j]
+                sum += num * multiple
+                i = j
+                if (!stopped && num % x == 0) {
+                    array[j] = num / x
+                } else {
+                    stopped = true
+                    break
+                }
             }
-            i++
-        }
 
-        println(sum)
+            if (stopped) {
+                for (j in (i + 1) until n) {
+                    sum += array[j] * multiple
+                }
+                multiple *= x
+                for (j in 0 until i) {
+                    sum += array[j] * multiple
+                }
+                println(sum)
+                return
+            }
+            multiple *= x
+        }
     }
 }
 
