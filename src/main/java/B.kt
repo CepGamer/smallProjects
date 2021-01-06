@@ -11,7 +11,7 @@ private val size = 100_000 + 10
 private var n: Int = 0
 
 private lateinit var Int: BooleanArray
-private lateinit var edges: HashMap<Int, ArrayDeque<Int>>
+private lateinit var edges: Array<ArrayDeque<Int>>
 
 var debug = false
 
@@ -19,10 +19,14 @@ fun B() {
     scanner.apply {
         val T = nextInt()
 
+        val stringResult = StringBuilder()
+
         for (TEST in 1..T) {
             initB()
-            runTestB(T, TEST)
+            stringResult.appendLine(runTestB(T, TEST))
         }
+
+        print(stringResult)
     }
 }
 
@@ -70,27 +74,21 @@ class FastScanner {
 }
 
 fun initB() {
-    edges = HashMap()
 }
 
-fun runTestB(T: Int, t: Int) {
+fun runTestB(T: Int, t: Int): String {
     scanner.apply {
         n = nextInt()
         val m = nextInt()
 
         val visited = IntArray(n + 1)
+        edges = Array(n + 1) { ArrayDeque() }
 
         for (i in 1..m) {
             val a = nextInt()
             val b = nextInt()
-            if (!edges.containsKey(a)) {
-                edges[a] = ArrayDeque()
-            }
-            edges[a]!!.add(b)
-            if (!edges.containsKey(b)) {
-                edges[b] = ArrayDeque()
-            }
-            edges[b]!!.add(a)
+            edges[a].add(b)
+            edges[b].add(a)
         }
 
         val next = ArrayDeque<Int>(n + 1)
@@ -110,11 +108,11 @@ fun runTestB(T: Int, t: Int) {
                 blacks++
             }
             seen++
-            if (!edges.containsKey(v))
+            if (edges[v].isEmpty())
                 break
-            val neighbours = edges[v]!!
+            val neighbours = edges[v]
             while (!neighbours.isEmpty()) {
-                val u = neighbours.removeFirst()
+                val u = neighbours.removeLast()
                 if (!isCurrentWhite) {
                     visited[u] = visited[u] or 1
                     next.addLast(u)
@@ -125,9 +123,9 @@ fun runTestB(T: Int, t: Int) {
         }
 
         if (seen == n) {
-            println("YES\n$blacks\n" + result.joinToString(" "))
+            return StringBuilder().append("YES\n$blacks\n").append(result.joinToString(" ")).toString()
         } else {
-            println("NO")
+            return "NO"
         }
     }
 }
