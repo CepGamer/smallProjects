@@ -18,62 +18,26 @@ fun A() {
         val T = nextInt()
         for (TEST in 1..T) {
             init()
-            runTest(TEST, T)
+            println(runTest(TEST, T))
         }
     }
 }
 
 fun preInit() {
-    for (i in 1..1000_000) {
-        if (array[i] != 0) {
-            continue
-        }
-        var j = 1
-        while (i * j * j < N) {
-            array[i * j * j++] = i
-        }
-    }
 }
 
 fun init() {
 }
 
-fun runTest(test:Int, t: Int) {
+fun runTest(test:Int, t: Int): String {
     scanner.apply {
         n = nextInt()
 
-        var maxSize = 0
-        var even = 0
-        val arr = IntArray(n)
+        val b = "9012345678".repeat(n/ 10 + 1)
 
-        for (i in 0 until n) {
-            val num = nextInt()
-            arr[i] = num
-            val squareRemainder = array[num]
-            maxSize = max(maxSize, ++count[squareRemainder])
-        }
+        val res = "98$b"
 
-        val one = count[1]
-        for (num in arr) {
-            val squareRemainder = array[num]
-            if (count[squareRemainder] and 1 == 0 && squareRemainder != 1) {
-                even += count[squareRemainder]
-            }
-            count[squareRemainder] = 0
-        }
-
-        val q = nextInt()
-        val string = StringBuilder()
-        val a = maxSize
-        val b = max(maxSize, even + one)
-
-        for (i in 0 until q) {
-            string.append(if (nextLong() == 0L) a else b).append('\n')
-        }
-
-        print(string)
-
-        count[1] = 0
+        return res.take(n)
     }
 }
 
