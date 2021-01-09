@@ -1,5 +1,5 @@
 import java.util.*
-import kotlin.math.abs
+import kotlin.math.*
 
 private val scanner = Scanner(System.`in`)
 private val size = 100_000 + 10
@@ -21,37 +21,49 @@ fun initC() {
 
 fun runTestC(): String {
     scanner.apply {
-        var n1 = nextInt()
-        var n2 = nextInt()
-        var n3 = nextInt()
-
-        var bag1 = LongArray(n1)
-        var bag2 = LongArray(n2)
-        var bag3 = LongArray(n3)
-
-        for (i in 0 until n1) {
-            bag1[i] = nextLong()
-        }
-        for (i in 0 until n2) {
-            bag2[i] = nextLong()
-        }
-        for (i in 0 until n3) {
-            bag3[i] = nextLong()
+        val sizes = IntArray(3)
+        for (i in 0 until 3) {
+            sizes[i] = nextInt()
         }
 
-        bag1.sort()
-        bag2.sort()
-        bag3.sort()
+        val bags = Array(3) { LongArray(sizes[it]) }
 
-        var someArray: List<Long> = arrayListOf(bag1[0], bag2[0], bag3[0],
-            bag1.takeLast(n1 - 1).sum(), bag2.takeLast(n2 - 1).sum(), bag3.takeLast(n3 - 1).sum()).sorted()
+        for (s in 0 until 3) {
+            for (i in 0 until sizes[s]) {
+                bags[s][i] = nextLong()
+            }
+        }
 
-        someArray = someArray.filter { it != 0L }
+        bags.forEach { it.sort() }
 
-        if (someArray.size == 3)
-            return (someArray[2] + (someArray[1] - someArray[0])).toString()
+        val calculate = {
+            val res = bags[0].sum()
+            val (m1, m2) = bags[1][0] to bags[2][0]
+            val (s1, s2) = bags[1].takeLast(sizes[1] - 1).sum() to bags[2].takeLast(sizes[2] - 1).sum()
 
-        return (someArray.takeLast(someArray.size - 3).sum() + someArray[2] - someArray[0] - someArray[1]).toString()
+            res + arrayOf(m1 - m2 - s2 + s1, m2 + s2 - m1 - s1, s1 + s2 - m1 - m2).maxOrNull()!!
+        }
+        var res = calculate()
+
+        val tmpb1 = bags[0]
+        bags[0] = bags[1]
+        bags[1] = tmpb1
+        val tmps1 = sizes[0]
+        sizes[0] = sizes[1]
+        sizes[1] = tmps1
+
+        res = max(res, calculate())
+
+        val tmpb2 = bags[0]
+        bags[0] = bags[2]
+        bags[2] = tmpb2
+        val tmps2 = sizes[0]
+        sizes[0] = sizes[2]
+        sizes[2] = tmps2
+
+        res = max(res, calculate())
+
+        return res.toString()
     }
 }
 
