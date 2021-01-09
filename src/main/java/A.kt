@@ -12,6 +12,8 @@ private val array = IntArray(N)
 private val count = IntArray(N)
 private val isEqual0 = BooleanArray(N)
 
+val modulo = 1000_000_000L + 7L
+
 fun A() {
     scanner.apply {
         preInit()
@@ -29,15 +31,28 @@ fun preInit() {
 fun init() {
 }
 
-fun runTest(test:Int, t: Int): String {
+fun runTest(test: Int, t: Int): String {
     scanner.apply {
         n = nextInt()
+        val k = nextInt()
+        val q = nextInt()
 
-        val b = "9012345678".repeat(n/ 10 + 1)
+        val arr = LongArray(n)
+        for (i in 0 until n) {
+            arr[i] = nextLong()
+        }
 
-        val res = "98$b"
+        val times = Array(n) { LongArray(k) }
 
-        return res.take(n)
+        for (i in 0 until n) {
+            var sum = arr[i]
+            times[i][0] = sum
+            for (j in 1 until k) {
+
+            }
+        }
+
+        return ""
     }
 }
 

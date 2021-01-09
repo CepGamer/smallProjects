@@ -38,6 +38,21 @@ class FastScannerForCopy {
         return if (neg) -res else res
     }
 
+    fun nextLong(): Long {
+        var neg = false
+        if (c == NC) c = char
+        while (c < '0' || c > '9') {
+            if (c == '-') neg = true
+            c = char
+        }
+        var res = 0L
+        while (c >= '0' && c <= '9') {
+            res = (res shl 3) + (res shl 1) + (c - '0')
+            c = char
+        }
+        return if (neg) -res else res
+    }
+
     init {
         `in` = BufferedInputStream(System.`in`, BS)
     }

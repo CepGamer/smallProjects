@@ -1,9 +1,7 @@
 import java.io.BufferedInputStream
 import java.lang.StringBuilder
-import java.util.*
 import kotlin.collections.ArrayDeque
-import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
+import kotlin.math.*
 
 private val scanner = FastScanner()
 private val size = 100_000 + 10
@@ -23,10 +21,8 @@ fun B() {
 
         for (TEST in 1..T) {
             initB()
-            stringResult.appendLine(runTestB(T, TEST))
+            println(runTestB(T, TEST))
         }
-
-        print(stringResult)
     }
 }
 
@@ -79,54 +75,46 @@ fun initB() {
 fun runTestB(T: Int, t: Int): String {
     scanner.apply {
         n = nextInt()
-        val m = nextInt()
 
-        val visited = IntArray(n + 1)
-        edges = Array(n + 1) { ArrayDeque() }
-
-        for (i in 1..m) {
-            val a = nextInt()
-            val b = nextInt()
-            edges[a].add(b)
-            edges[b].add(a)
+        val arr = IntArray(n)
+        for (i in 0 until n) {
+            arr[i] = nextInt()
         }
 
-        val next = ArrayDeque<Int>(n + 1)
-        next.addLast(1)
-        var blacks = 0
-        var seen = 0
-        val result = ArrayList<Int>(n)
-        while (!next.isEmpty()) {
-            val v = next.removeFirst()
-            if (visited[v] and 2 != 0) {
-                continue
+        var count = 0
+        val hillsOrValleys = IntArray(n)
+        for (i in 1 until (n - 1)) {
+            if (arr[i] > arr[i - 1] && arr[i] > arr[i + 1]) {
+                hillsOrValleys[i] = 1
+                count++
             }
-            visited[v] = visited[v] or 2
-            val isCurrentWhite = visited[v] and 1 != 0
-            if (!isCurrentWhite) {
-                result.add(v)
-                blacks++
-            }
-            seen++
-            if (edges[v].isEmpty())
-                break
-            val neighbours = edges[v]
-            while (!neighbours.isEmpty()) {
-                val u = neighbours.removeLast()
-                if (!isCurrentWhite) {
-                    visited[u] = visited[u] or 1
-                    next.addLast(u)
-                } else {
-                    next.addFirst(u)
-                }
+            if (arr[i] < arr[i - 1] && arr[i] < arr[i + 1]) {
+                hillsOrValleys[i] = 1
+                count++
             }
         }
 
-        if (seen == n) {
-            return StringBuilder().append("YES\n$blacks\n").append(result.joinToString(" ")).toString()
-        } else {
-            return "NO"
+        val isHillOrValley = { i: Int ->
+            if (i <= 0 || i >= n - 1) 0
+            else if ((arr[i - 1] < arr[i] && arr[i + 1] < arr[i]) || (arr[i - 1] > arr[i] && arr[i + 1] > arr[i])) 1 else 0
         }
+
+        var res = count
+
+        for (i in 1 until (n - 1)) {
+            val tmp = arr[i]
+            arr[i] = arr[i - 1]
+            res = arrayOf(res, count - hillsOrValleys[i - 1] - hillsOrValleys[i] - hillsOrValleys[i + 1]
+             + isHillOrValley(i - 1) + isHillOrValley(i) + isHillOrValley(i + 1)).minOrNull()!!
+
+            arr[i] = arr[i + 1]
+            res = arrayOf(res, count - hillsOrValleys[i - 1] - hillsOrValleys[i] - hillsOrValleys[i + 1]
+                    + isHillOrValley(i - 1) + isHillOrValley(i) + isHillOrValley(i + 1)).minOrNull()!!
+
+            arr[i] = tmp
+        }
+
+        return res.toString()
     }
 }
 
