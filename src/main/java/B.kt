@@ -11,11 +11,18 @@ private var n: Int = 0
 private lateinit var Int: BooleanArray
 private lateinit var edges: Array<ArrayDeque<Int>>
 
+private lateinit var divisors: Array<ArrayDeque<Int>>
+private lateinit var divisorByInt: List<Pair<Int, ArrayDeque<Int>>>
+
+private lateinit var sieve: BooleanArray
+
 var debug = false
 
 fun B() {
     scanner.apply {
         val T = nextInt()
+
+        preInitB()
 
         val stringResult = StringBuilder()
 
@@ -69,6 +76,32 @@ class FastScanner {
     }
 }
 
+fun preInitB() {
+    sieve = BooleanArray(30_000 + 10) { true }
+    val isPrime = { a: Int ->
+        var res = true
+        var j = 3
+        while (j * j <= a) {
+            if (a % j == 0)
+                res = false
+
+            j += 2
+        }
+
+        res
+    }
+
+    for (i in 2 until 15_000 + 10) {
+        if (!sieve[i])
+            continue
+        var a = i + i
+        while (a < 30_000 + 10) {
+            sieve[a] = false
+            a += i
+        }
+    }
+}
+
 fun initB() {
 }
 
@@ -76,45 +109,37 @@ fun runTestB(T: Int, t: Int): String {
     scanner.apply {
         n = nextInt()
 
-        val arr = IntArray(n)
-        for (i in 0 until n) {
-            arr[i] = nextInt()
-        }
+        val isPrime = { a: Int ->
+            if (a < 30_000 + 10) {
+                sieve[a]
+            } else {
+                var res = true
+                var j = 3
+                while (j * j <= a) {
+                    if (a % j == 0)
+                        res = false
 
-        var count = 0
-        val hillsOrValleys = IntArray(n)
-        for (i in 1 until (n - 1)) {
-            if (arr[i] > arr[i - 1] && arr[i] > arr[i + 1]) {
-                hillsOrValleys[i] = 1
-                count++
+                    j += 2
+                }
+
+                res
             }
-            if (arr[i] < arr[i - 1] && arr[i] < arr[i + 1]) {
-                hillsOrValleys[i] = 1
-                count++
+        }
+
+        for (i in (1 + n)..30_000 + 10) {
+            if (!isPrime(i))
+                continue
+            for (j in (i + n)..30_000 + 10) {
+                if (!isPrime(j))
+                    continue
+                if (i - 1 >= n && j - i >= n && i * j >= n) {
+
+                    return (i * j).toString()
+                }
             }
         }
 
-        val isHillOrValley = { i: Int ->
-            if (i <= 0 || i >= n - 1) 0
-            else if ((arr[i - 1] < arr[i] && arr[i + 1] < arr[i]) || (arr[i - 1] > arr[i] && arr[i + 1] > arr[i])) 1 else 0
-        }
-
-        var res = count
-
-        for (i in 1 until (n - 1)) {
-            val tmp = arr[i]
-            arr[i] = arr[i - 1]
-            res = arrayOf(res, count - hillsOrValleys[i - 1] - hillsOrValleys[i] - hillsOrValleys[i + 1]
-             + isHillOrValley(i - 1) + isHillOrValley(i) + isHillOrValley(i + 1)).minOrNull()!!
-
-            arr[i] = arr[i + 1]
-            res = arrayOf(res, count - hillsOrValleys[i - 1] - hillsOrValleys[i] - hillsOrValleys[i + 1]
-                    + isHillOrValley(i - 1) + isHillOrValley(i) + isHillOrValley(i + 1)).minOrNull()!!
-
-            arr[i] = tmp
-        }
-
-        return res.toString()
+        return "1"
     }
 }
 

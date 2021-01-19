@@ -19,7 +19,7 @@ val times = LongArray(N)
 fun A() {
     scanner.apply {
         preInit()
-        val T = 1//nextInt()
+        val T = nextInt()
         for (TEST in 1..T) {
             println(runTest(TEST, T))
         }
@@ -27,60 +27,44 @@ fun A() {
 }
 
 fun preInit() {
-    for (i in 0 until N) {
-        paths[i][0] = 1
-    }
 }
 
 fun init(k: Int) {
-    for (i in 1 until N) {
-        paths[0][i] = paths[1][i - 1]
-        paths[n - 1][i] = paths[n - 2][i - 1]
-        for (j in 1 until (n - 1)) {
-            paths[j][i] = (paths[j - 1][i - 1] + paths[j + 1][i - 1]) % modulo
-            if (paths[j][i] < 0) paths[j][i] += modulo
-        }
-    }
-    for (i in 0 until n) {
-        for (j in 0..k) {
-            times[i] += paths[i][j] * paths[i][k - j]
-        }
-        times[i] %= modulo
-        if (times[i] < 0) times[i] += modulo
-    }
 }
 
 fun runTest(test: Int, t: Int): String {
     scanner.apply {
         n = nextInt()
-        val k = nextInt()
-        val q = nextInt()
-
-        init(k)
-
-        var res = 0L
-        val arr = LongArray(n)
-        for (i in 0 until n) {
-            arr[i] = nextLong()
-            res += arr[i] * times[i]
-            res %= modulo
-            if (res < 0) res += modulo
-        }
-
-        val stringBuilder = StringBuilder()
-        for (i in 0 until q) {
-            val (j, a) = nextInt() - 1 to nextLong()
-            res -= (arr[j] * times[j])
-            arr[j] = a
-            res += a * times[j]
-            res %= modulo
-            if (res < 0) {
-                res += modulo
+        nextLine()
+        val s = nextLine()
+        val res = StringBuilder(n)
+        var last = if (s[0] == '0') '1' else '2'
+        res.append('1')
+        for (i in 1 until n) {
+            val b = s[i]
+            val c = when (last) {
+                '1' ->
+                    if (b == '1') {
+                        last = '2'
+                        '1'
+                    } else {
+                        last = '0'
+                        '0'
+                    }
+                '2' -> {
+                    last = '1'
+                    if (b == '1') '0' else '1'
+                }
+                '0' -> {
+                    last = if (b == '0') '1' else '2'
+                    '1'
+                }
+                else -> '0'
             }
-            stringBuilder.appendLine(res)
+            res.append(c)
         }
 
-        return stringBuilder.toString()
+        return res.toString()
     }
 }
 

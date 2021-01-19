@@ -1,14 +1,19 @@
 import java.util.*
-import kotlin.math.*
+import kotlin.collections.ArrayDeque
+import kotlin.collections.HashMap
+import kotlin.math.max
 
 private val scanner = Scanner(System.`in`)
 private val size = 100_000 + 10
+
+private val count = HashMap<Int, Int>()
+private lateinit var arr: IntArray
 
 private var n: Int = 0
 
 fun C() {
     scanner.apply {
-        val T = 1//nextInt()
+        val T = nextInt()
         for (TEST in 1..T) {
             initC()
             println(runTestC())
@@ -17,53 +22,76 @@ fun C() {
 }
 
 fun initC() {
+    count.clear()
 }
 
 fun runTestC(): String {
     scanner.apply {
-        val sizes = IntArray(3)
-        for (i in 0 until 3) {
-            sizes[i] = nextInt()
+        n = nextInt()
+        arr = IntArray(2 * n)
+        for (i in 0 until 2 * n) {
+            arr[i] = nextInt()
         }
 
-        val bags = Array(3) { LongArray(sizes[it]) }
+        arr.sort()
 
-        for (s in 0 until 3) {
-            for (i in 0 until sizes[s]) {
-                bags[s][i] = nextLong()
+        for (i in 0 until 2 * n) {
+            count[arr[i]] = if (!count.containsKey(arr[i])) 1 else count[arr[i]]!! + 1
+        }
+
+        val res = dfs(2 * n - 1, -1, 0)
+
+        if (res.size == n) {
+            return "YES\n" + (res.first().first + res.first().second) + "\n" + res.joinToString("\n") { (a, b) -> "$a $b"}
+        } else {
+            return "NO"
+        }
+    }
+}
+
+fun dfs(index: Int, sum: Int, depth: Int): ArrayDeque<Pair<Int, Int>> {
+    if (index < 0) {
+        return ArrayDeque()
+    }
+    if (sum == -1) {
+        for (i in 0 until index) {
+            count[arr[index]] = count[arr[index]]!! - 1
+            count[arr[i]] = count[arr[i]]!! - 1
+            val res = dfs(if (i == index - 1) index - 2 else index - 1, arr[index], 1)
+            count[arr[index]] = count[arr[index]]!! + 1
+            count[arr[i]] = count[arr[i]]!! + 1
+            if (res.size == n - 1) {
+                res.addFirst(arr[index] to arr[i])
+                return res
             }
         }
-
-        bags.forEach { it.sort() }
-
-        val calculate = {
-            val res = bags[0].sum()
-            val (m1, m2) = bags[1][0] to bags[2][0]
-            val (s1, s2) = bags[1].takeLast(sizes[1] - 1).sum() to bags[2].takeLast(sizes[2] - 1).sum()
-
-            res + arrayOf(m1 - m2 - s2 + s1, m2 + s2 - m1 - s1, s1 + s2 - m1 - m2).maxOrNull()!!
+        return ArrayDeque()
+    } else {
+        val i = arr.binarySearch(sum - arr[index])
+        if (i < 0) {
+            return ArrayDeque()
         }
-        var res = calculate()
-
-        val tmpb1 = bags[0]
-        bags[0] = bags[1]
-        bags[1] = tmpb1
-        val tmps1 = sizes[0]
-        sizes[0] = sizes[1]
-        sizes[1] = tmps1
-
-        res = max(res, calculate())
-
-        val tmpb2 = bags[0]
-        bags[0] = bags[2]
-        bags[2] = tmpb2
-        val tmps2 = sizes[0]
-        sizes[0] = sizes[2]
-        sizes[2] = tmps2
-
-        res = max(res, calculate())
-
-        return res.toString()
+        count[arr[index]] = count[arr[index]]!! - 1
+        count[arr[i]] = count[arr[i]]!! - 1
+        if (i < 0 || count[arr[i]]!! < 0 || count[arr[index]]!! < 0) {
+            count[arr[index]] = count[arr[index]]!! + 1
+            count[arr[i]] = count[arr[i]]!! + 1
+            return ArrayDeque()
+        }
+        var next = index - 1
+        while (next >= 0 && count[arr[next]]!! == 0)
+            next--
+        val res = dfs(next, max(arr[index], arr[i]), depth + 1)
+        count[arr[index]] = count[arr[index]]!! + 1
+        count[arr[i]] = count[arr[i]]!! + 1
+        if (depth == n - 1) {
+            val deq = ArrayDeque<Pair<Int, Int>>()
+            deq.add(arr[index] to arr[i])
+            return deq
+        } else if (!res.isEmpty()) {
+            res.addFirst(arr[index] to arr[i])
+        }
+        return res
     }
 }
 
