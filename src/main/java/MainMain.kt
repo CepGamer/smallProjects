@@ -1,3 +1,4 @@
+import java.lang.StringBuilder
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashSet
@@ -10,9 +11,9 @@ fun main() {
 
     println(1073741823 * 10)
 
-    println(longestPalindrome("abb"))
-
+    println(!isMatch("mississippi", "mis*is*p*."))
     println(isMatch("aab", "c*a*b"))
+    println(!isMatch("aaba", "ab*a*c*a"))
 }
 
 fun divide(dividend: Int, divisor: Int): Int {
@@ -62,65 +63,39 @@ fun divide(dividend: Int, divisor: Int): Int {
 
 
 class State(var isFinal: Boolean,
+            var emptyTransitions: ArrayList<State> = arrayListOf(),
             val transitions: HashMap<Char, ArrayList<State>> = HashMap<Char, ArrayList<State>>()) {
 }
 
 fun isMatch(s: String, p: String): Boolean {
-    val state = buildStates(p)
-    var activeStates = HashSet<State>()
-    activeStates.add(state)
-    for (c in s) {
-        val newActive = HashSet<State>()
-        for (state in activeStates) {
-            if (state.transitions.containsKey(c))
-                newActive.addAll(state.transitions[c]!!)
-        }
-        if (newActive.size == 0) {
-            return false
-        }
-        activeStates = newActive
-    }
-
-    return activeStates.any{ it.isFinal }
+    return false
 }
 
-fun buildStates(pattern: String): State {
-    val res = State(false)
-    var curState: State = res
-    var prev = pattern[0]
-    var i = 0
-    while (i < pattern.length) {
-        var c = pattern[i]
-        when (c) {
-            '*' -> {
-                if (prev == '.') {
-                    ('a'..'z').forEach { curState.transitions[it] = arrayListOf(curState) }
-                } else {
-                    curState.transitions[prev] = arrayListOf(curState)
-                }
-                i++
-                c = pattern[i]
-            }
-            else -> {
-                val newState = State(false)
-                when (c) {
-                    '.' -> {
-                        ('a'..'z').forEach {
-                            if (curState.transitions[it] != null)
-                                curState.transitions[it]!!.add(newState)
-                            else curState.transitions[it] = arrayListOf(newState)
-                        }
-                    }
-                    else -> if (curState.transitions[c] != null)
-                        curState.transitions[c]!!.add(newState)
-                    else curState.transitions[c] = arrayListOf(newState)
-                }
-                curState = newState
+
+fun convert(s: String, numRows: Int): String {
+    if (numRows == 1) {
+        return s
+    }
+    val cycle = (numRows - 1) * 2
+    val stringBuilders = Array(numRows) { StringBuilder() }
+    s.forEachIndexed { i, c ->
+        if (i % cycle == 0) {
+            stringBuilders[0].append(c)
+        } else if ((i + cycle / 2) % cycle == 0) {
+            stringBuilders[numRows - 1].append(c)
+        } else {
+            val j = i % cycle
+            if (j < numRows) {
+                stringBuilders[j].append(c)
+            } else {
+                stringBuilders[cycle - j].append(c)
             }
         }
-        i++
-        prev = c
     }
-    curState.isFinal = true
-    return res
+
+    val builder = StringBuilder(s.length)
+
+    stringBuilders.forEach { builder.append(it.toString()) }
+
+    return builder.toString()
 }
