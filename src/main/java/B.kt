@@ -1,7 +1,6 @@
 import java.io.BufferedInputStream
 import java.lang.StringBuilder
 import kotlin.collections.ArrayDeque
-import kotlin.math.*
 
 private val scanner = FastScanner()
 private val size = 100_000 + 10
@@ -14,7 +13,7 @@ private lateinit var edges: Array<ArrayDeque<Int>>
 private lateinit var divisors: Array<ArrayDeque<Int>>
 private lateinit var divisorByInt: List<Pair<Int, ArrayDeque<Int>>>
 
-private lateinit var sieve: BooleanArray
+private lateinit var dynamic: BooleanArray
 
 var debug = false
 
@@ -23,8 +22,6 @@ fun B() {
         val T = nextInt()
 
         preInitB()
-
-        val stringResult = StringBuilder()
 
         for (TEST in 1..T) {
             initB()
@@ -77,29 +74,6 @@ class FastScanner {
 }
 
 fun preInitB() {
-    sieve = BooleanArray(30_000 + 10) { true }
-    val isPrime = { a: Int ->
-        var res = true
-        var j = 3
-        while (j * j <= a) {
-            if (a % j == 0)
-                res = false
-
-            j += 2
-        }
-
-        res
-    }
-
-    for (i in 2 until 15_000 + 10) {
-        if (!sieve[i])
-            continue
-        var a = i + i
-        while (a < 30_000 + 10) {
-            sieve[a] = false
-            a += i
-        }
-    }
 }
 
 fun initB() {
@@ -108,38 +82,7 @@ fun initB() {
 fun runTestB(T: Int, t: Int): String {
     scanner.apply {
         n = nextInt()
-
-        val isPrime = { a: Int ->
-            if (a < 30_000 + 10) {
-                sieve[a]
-            } else {
-                var res = true
-                var j = 3
-                while (j * j <= a) {
-                    if (a % j == 0)
-                        res = false
-
-                    j += 2
-                }
-
-                res
-            }
-        }
-
-        for (i in (1 + n)..30_000 + 10) {
-            if (!isPrime(i))
-                continue
-            for (j in (i + n)..30_000 + 10) {
-                if (!isPrime(j))
-                    continue
-                if (i - 1 >= n && j - i >= n && i * j >= n) {
-
-                    return (i * j).toString()
-                }
-            }
-        }
-
-        return "1"
+        return if (n % 2020 <= n / 2020) "YES" else "NO"
     }
 }
 

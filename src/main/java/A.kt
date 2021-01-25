@@ -34,37 +34,15 @@ fun init(k: Int) {
 
 fun runTest(test: Int, t: Int): String {
     scanner.apply {
-        n = nextInt()
-        nextLine()
-        val s = nextLine()
-        val res = StringBuilder(n)
-        var last = if (s[0] == '0') '1' else '2'
-        res.append('1')
-        for (i in 1 until n) {
-            val b = s[i]
-            val c = when (last) {
-                '1' ->
-                    if (b == '1') {
-                        last = '2'
-                        '1'
-                    } else {
-                        last = '0'
-                        '0'
-                    }
-                '2' -> {
-                    last = '1'
-                    if (b == '1') '0' else '1'
-                }
-                '0' -> {
-                    last = if (b == '0') '1' else '2'
-                    '1'
-                }
-                else -> '0'
+        var l = nextLong()
+        while (l > 1L) {
+            if (l and 1L == 1L) {
+                return "YES"
+            } else {
+                l = l shr 1
             }
-            res.append(c)
         }
-
-        return res.toString()
+        return "NO"
     }
 }
 
