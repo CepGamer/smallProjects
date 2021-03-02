@@ -14,7 +14,7 @@ private var n: Int = 0
 
 fun C() {
     scanner.apply {
-        val T = nextInt()
+        val T = 1 //nextInt()
         for (TEST in 1..T) {
             initC()
             println(runTestC())
@@ -28,40 +28,15 @@ fun initC() {
 
 fun runTestC(): String {
     scanner.apply {
-        val a = nextInt()
-        val b = nextInt()
         n = nextInt()
-
-        val boys = IntArray(n)
-        val girls = IntArray(n)
+        val met = HashMap<Int, Int>()
 
         for (i in 0 until n) {
-            boys[i] = nextInt()
-        }
-        for (i in 0 until n) {
-            girls[i] = nextInt()
+            val a = nextInt()
+            met[a] = i
         }
 
-        if (a < 2 || b < 2 || n < 2) {
-            return "0"
-        }
-
-        var res = 0
-        for (i in 0 until n) {
-            val boy = boys[i]
-            val girl = girls[i]
-            res += (n - 1)
-            for (j in 0 until n) {
-                if (i == j) {
-                    continue
-                }
-                if (boys[j] == boy || girls[j] == girl) {
-                    res--
-                }
-            }
-        }
-
-        return (res / 2).toString()
+        return "${met.keys.size}\n" + met.keys.sortedBy { met[it] }.joinToString(" ")
     }
 }
 

@@ -1,8 +1,9 @@
 import java.io.BufferedInputStream
 import java.lang.StringBuilder
+import java.util.*
 import kotlin.collections.ArrayDeque
 
-private val scanner = FastScanner()
+private val scanner = Scanner(System.`in`)
 private val size = 100_000 + 10
 
 private var n: Int = 0
@@ -19,7 +20,7 @@ var debug = false
 
 fun B() {
     scanner.apply {
-        val T = nextInt()
+        val T = 1//nextInt()
 
         preInitB()
 
@@ -82,7 +83,21 @@ fun initB() {
 fun runTestB(T: Int, t: Int): String {
     scanner.apply {
         n = nextInt()
-        return if (n % 2020 <= n / 2020) "YES" else "NO"
+        val s = next()
+        var count = 0
+        var subsequent = 0
+        for (c in s) {
+            if (c == 'x') {
+                subsequent++
+                if (subsequent > 2) {
+                    count++
+                }
+            } else {
+                subsequent = 0
+            }
+        }
+
+        return count.toString()
     }
 }
 

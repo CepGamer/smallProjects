@@ -1,4 +1,3 @@
-import java.lang.StringBuilder
 import java.util.*
 
 var enableDebug = false
@@ -34,15 +33,14 @@ fun init(k: Int) {
 
 fun runTest(test: Int, t: Int): String {
     scanner.apply {
-        var l = nextLong()
-        while (l > 1L) {
-            if (l and 1L == 1L) {
-                return "YES"
-            } else {
-                l = l shr 1
-            }
+        val n = nextLong()
+        val a = nextInt()
+        val b = nextInt()
+        if (2 * a < b) {
+            return (n * a).toString()
+        } else {
+            return ((n / 2 * b) + (n % 2) * a).toString()
         }
-        return "NO"
     }
 }
 

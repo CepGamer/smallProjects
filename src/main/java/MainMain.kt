@@ -9,7 +9,7 @@ fun main() {
     println(divide(Int.MIN_VALUE, -1))
     println(divide(Int.MIN_VALUE, 2))
 
-    println(1073741823 * 10)
+    println((-1).toUInt())
 
     println(!isMatch("mississippi", "mis*is*p*."))
     println(isMatch("aab", "c*a*b"))
