@@ -5,6 +5,10 @@ import kotlin.collections.HashSet
 
 private val scanner = Scanner(System.`in`)
 
+class TreeNode(var `val`: Int) {
+    var left: TreeNode? = null
+    var right: TreeNode? = null
+}
 fun main() {
     println(divide(Int.MIN_VALUE, -1))
     println(divide(Int.MIN_VALUE, 2))
@@ -14,6 +18,16 @@ fun main() {
     println(!isMatch("mississippi", "mis*is*p*."))
     println(isMatch("aab", "c*a*b"))
     println(!isMatch("aaba", "ab*a*c*a"))
+
+    var node = TreeNode(5) as TreeNode?
+    while (node != null) {
+        node?.let {
+            it
+        }
+        node = node?.left
+
+        println(node)
+    }
 }
 
 fun divide(dividend: Int, divisor: Int): Int {

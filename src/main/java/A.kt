@@ -33,14 +33,21 @@ fun init(k: Int) {
 
 fun runTest(test: Int, t: Int): String {
     scanner.apply {
-        val n = nextLong()
+        val n = nextInt()
         val a = nextInt()
         val b = nextInt()
-        if (2 * a < b) {
-            return (n * a).toString()
-        } else {
-            return ((n / 2 * b) + (n % 2) * a).toString()
+        val c = nextInt()
+
+        var res = -1
+        val same = if (a == b || a == c) a else b
+        if (a != same) res = 1 else if (b != same) res = 2 else if (c != same) res = 3
+
+        for (i in 1..(n - 3)) {
+            val x = nextInt()
+            if (x != same) res = i + 3
         }
+
+        return res.toString()
     }
 }
 
