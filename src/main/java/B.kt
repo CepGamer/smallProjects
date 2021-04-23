@@ -2,8 +2,7 @@ import java.io.BufferedInputStream
 import java.lang.StringBuilder
 import java.util.*
 import kotlin.collections.ArrayDeque
-import kotlin.math.max
-import kotlin.math.min
+import kotlin.math.*
 
 private val scanner = Scanner(System.`in`)
 private val size = 100_000 + 10
@@ -84,55 +83,44 @@ fun initB() {
 
 fun runTestB(T: Int, t: Int): String {
     scanner.apply {
-        n = nextInt()
-        nextLine()
+        val (n, l) = nextInt() to nextInt()
+        var (r, s) = nextInt() to nextInt()
 
-        val square = Array<Pair<Int, Int>>(4) { 0 to 0 }
-        var index = 0
+        val perm = HashSet<Int>()
 
-        for (i in 0 until n) {
-            val s = nextLine()
-            for (j in 0 until n) {
-                val c = s[j]
-                if (c == '*') {
-                    square[index++] = i to j
+        for (i in (r - l) downTo 0) {
+            for (j in min((s - ((i + 1) * i) / 2), n - (r - l - i)) downTo (i)) {
+                if (j !in perm) {
+                    perm.add(j)
+                    s -= j
+                    break
                 }
             }
         }
 
-        if (square[0].first == square[1].first) {
-            val x = if (square[1].first < n - 1) square[1].first + 1 else 0
-            square[2] = (x) to square[1].second
-            square[3] = (x) to square[0].second
-        } else if (square[0].second == square[1].second) {
-            val x = if (square[1].second < n - 1) square[1].second + 1 else 0
-            square[2] = square[0].first to (x)
-            square[3] = square[1].first to (x)
-        } else {
-            square[2] = square[0].first to square[1].second
-            square[3] = square[1].first to square[0].second
+        if (perm.size != r - l + 1 || s != 0) {
+            return "-1"
         }
-
-        val builder = StringBuilder()
-        for (i in 0 until n) {
-            for (j in 0 until n) {
-                var pr = false
-                for (a in square) {
-                    if (i == a.first && j == a.second) {
-                        builder.append('*')
-                        pr = true
-                        break
-                    }
-                }
-                if (!pr) {
-                    builder.append('.')
-                }
+        val res = IntArray(n)
+        var index = 1
+        for (i in 0 until (l - 1)) {
+            while (index in perm) {
+                index++
             }
-
-            if (i != n - 1) builder.append('\n')
+            res[i] = index++
+        }
+        var j = l - 1
+        for (a in perm) {
+            res[j++] = a
+        }
+        for (i in r until n) {
+            while (index in perm) {
+                index++
+            }
+            res[i] = index++
         }
 
-        return builder.toString()
+        return res.joinToString(" ")
     }
 }
 

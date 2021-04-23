@@ -1,3 +1,4 @@
+import java.lang.StringBuilder
 import java.util.*
 
 var enableDebug = false
@@ -34,20 +35,74 @@ fun init(k: Int) {
 fun runTest(test: Int, t: Int): String {
     scanner.apply {
         val n = nextInt()
-        val a = nextInt()
-        val b = nextInt()
-        val c = nextInt()
+        val b = LongArray(n + 2)
 
-        var res = -1
-        val same = if (a == b || a == c) a else b
-        if (a != same) res = 1 else if (b != same) res = 2 else if (c != same) res = 3
+        val max2 = LongArray(2)
 
-        for (i in 1..(n - 3)) {
-            val x = nextInt()
-            if (x != same) res = i + 3
+        b[0] = nextLong()
+        b[1] = nextLong()
+        max2[0] = b[0]
+        max2[1] = b[1]
+        max2.sort()
+
+        for (i in 2 until (n + 2)) {
+            b[i] = nextLong()
+            if (b[i] > max2[0]) {
+                max2[0] = b[i]
+                max2.sort()
+            }
         }
 
-        return res.toString()
+        var s = max2[0]
+        var ss = s
+        var max = max2[1]
+        val mx = max
+        for (i in 0 until (n + 2)) {
+            var rm = false
+            for (j in 0 until 2) {
+                if (b[i] == max2[j]) {
+                    rm = true
+                    max2[j] = -1
+                    break
+                }
+            }
+            if (!rm) {
+                s -= b[i]
+                ss += b[i]
+            }
+        }
+        val builder = StringBuilder()
+        if (s == 0L) {
+            for (i in 0 until n) {
+                builder.append(b[i])
+                builder.append(' ')
+            }
+
+            return builder.toString()
+        }
+
+        val d = ss - max
+        var excl = -1
+        for (i in 0 until n + 1) {
+            if (b[i] != max && b[i] == d) {
+                excl = i
+                break
+            }
+        }
+
+        return if (excl == -1) "-1" else {
+            for (i in 0 until n + 2) {
+                if (i == excl || b[i] == max) {
+                    if (b[i] == max) max = -1
+                    continue
+                }
+                else {
+                    builder.append(b[i])
+                    builder.append(' ')
+                }
+            }
+            builder.toString()
+        }
     }
 }
 
