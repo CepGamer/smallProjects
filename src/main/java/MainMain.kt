@@ -3,6 +3,7 @@ import java.lang.StringBuilder
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashSet
+import kotlin.math.max
 
 private val scanner = Scanner(System.`in`)
 
@@ -13,14 +14,15 @@ class TreeNode(var `val`: Int) {
 fun main() {
     val sln = Solution()
 
-    asrt(sln.findTargetSumWays(intArrayOf(1,1,1,1,1), 3), 5)
-    asrt(sln.findTargetSumWays(intArrayOf(1), 1), 1)
-    asrt(sln.findTargetSumWays(intArrayOf(1,1,1), 1), 3)
-    asrt(sln.findTargetSumWays(intArrayOf(1, 2, 3), 3), 0)
-    asrt(sln.findTargetSumWays(intArrayOf(1), -1), 1)
-    asrt(sln.findTargetSumWays(intArrayOf(2,107,109,113,127,131,137,3,2,3,5,7,11,13,17,19,23,29,47,53),132), 2248)
-    asrt(sln.findTargetSumWays(intArrayOf(0,1),1), 2)
-    asrt(sln.findTargetSumWays(intArrayOf(0,0,0,0,0,0,0,0,1),1), 256)
+    asrt(sln.maximumSwap(2736), 7236)
+    asrt(sln.maximumSwap(9973), 9973)
+    asrt(sln.maximumSwap(1), 1)
+    asrt(sln.maximumSwap(10), 10)
+    asrt(sln.maximumSwap(101), 110)
+    asrt(sln.maximumSwap(12345), 52341)
+    asrt(sln.maximumSwap(98368), 98863)
+    asrt(sln.maximumSwap(0), 0)
+    asrt(sln.maximumSwap(100000010), 110000000)
 }
 
 fun asrt(a: Int, b: Int) {
@@ -50,5 +52,51 @@ class Solution {
         }
 
         return sums[target + 1000]
+    }
+
+    fun maximumSwap(num: Int): Int {
+        var a = 1
+        var dgs = 0
+        val string = IntArray(10)
+        val maxVal = IntArray(10)
+        while (a < num) {
+            string[dgs] = getDigit(num, dgs++)
+            a *= 10
+        }
+
+        maxVal[0] = string[0]
+        for (i in 1 until 10) {
+            maxVal[i] = max(maxVal[i - 1], string[i])
+        }
+
+        string[dgs] = getDigit(num, dgs--)
+
+        var i = dgs
+        while (i >= 1) {
+            if (string[i] < maxVal[i]) {
+                for (j in 0 until i) {
+                    if (string[j] == maxVal[i]) {
+                        val a = string[i]
+                        string[i] = string[j]
+                        string[j] = a
+                    }
+                }
+                break
+            }
+            i--
+        }
+
+        return string.foldRight(0) { a, acc -> acc * 10 + a }
+    }
+
+    fun getDigit(num: Int, digit: Int): Int {
+        var dg = digit
+        var n = num
+        while (dg > 0) {
+            dg--
+            n /= 10
+        }
+
+        return n % 10
     }
 }
