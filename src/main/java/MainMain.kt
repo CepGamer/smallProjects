@@ -1,13 +1,26 @@
+import java.util.*
+
 fun main() {
+    runTest(intArrayOf(1, 2, -1000_000, 3, -1000_000), doubleArrayOf(0.0, 0.0, 1.5, 0.0, 2.0))
+    runTest(intArrayOf(-1, -1000_000, -2, -1000_000, -3, -1000_000, -4, -1000_000, -5, -1000_000),
+        doubleArrayOf(0.0, -1.0, 0.0, -1.5, 0.0, -2.0, 0.0, -2.5, 0.0, -3.0))
+}
+
+fun runTest(input: IntArray, result: DoubleArray) {
     val sln = Solution()
 
-    asrt(sln.minEatingSpeed(intArrayOf(1, 2), 2), 2)
-    asrt(sln.minEatingSpeed(intArrayOf(1, 5), 2), 5)
-    asrt(sln.minEatingSpeed(intArrayOf(1, 5), 5), 2)
-    asrt(sln.minEatingSpeed(intArrayOf(1, 5), 6), 1)
-    asrt(sln.minEatingSpeed(intArrayOf(3, 6, 7, 11), 8), 4)
-    asrt(sln.minEatingSpeed(intArrayOf(30, 11, 23, 4, 20), 5), 30)
-    asrt(sln.minEatingSpeed(intArrayOf(30, 11, 23, 4, 20), 6), 23)
+    for (i in input.indices) {
+        val a = input[i]
+        if (a == -1000_000) {
+            asrt(kotlin.math.abs(sln.findMedian() - result[i]) <= 0.00001)
+        } else {
+            sln.addNum(a)
+        }
+    }
+}
+
+fun asrt(b: Boolean) {
+    if (!b) throw java.lang.AssertionError("Failed")
 }
 
 fun asrt(a: Int, b: Int) {
@@ -15,25 +28,45 @@ fun asrt(a: Int, b: Int) {
 }
 
 class Solution {
-    fun minEatingSpeed(piles: IntArray, h: Int): Int {
-        val maxSpeed = piles.maxOrNull() ?: 1000_000_000
+    val left = TreeMap<Int, Int>().apply { this[-1000_000] = 1 }
+    val right = TreeMap<Int, Int>().apply { this[1000_000] = 1 }
+    var m = -1000_000
 
-        var (l, r) = 1 to maxSpeed + 1
-
-        while (l + 1 <= r) {
-            val m = (l + r) / 2
-
-            if (countTime(piles, m) <= h) {
-                r = m
-            } else {
-                l = m + 1
-            }
+    private fun TreeMap<Int, Int>.decrement(a: Int) {
+        if (a in this) {
+            if (this[a] == 1) this.remove(a) else this[a] = this[a]!! - 1
         }
-
-        return l
     }
 
-    fun countTime(piles: IntArray, speed: Int): Int {
-        return piles.map { it / speed + (if (it % speed > 0) 1 else 0) }.sum()
+    fun addNum(num: Int) {
+        if (m == -1000_000) {
+            if (left.lastKey() < num) {
+                right.increment(num)
+                m = right.firstKey()!!
+                right.decrement(m)
+            } else {
+                left.increment(num)
+                m = left.lastKey()
+                left.decrement(m)
+            }
+        } else {
+            if (m < num) {
+                right.increment(num)
+                left.increment(m)
+            } else {
+                left.increment(num)
+                right.increment(m)
+            }
+            m = -1000_000
+        }
+     }
+
+    private fun TreeMap<Int, Int>.increment(a: Int) {
+        if (a in this) this[a] = this[a]!! + 1 else this[a] = 1
+    }
+
+    fun findMedian(): Double {
+        return if (m != -1000_000) m.toDouble()
+        else (left.lastKey() + right.firstKey()).toDouble() / 2.0
     }
 }
