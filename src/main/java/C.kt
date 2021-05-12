@@ -27,24 +27,6 @@ fun C() {
 }
 
 fun preInitC() {
-    for (i in 1..100_000) {
-        var c = 0
-        var j = 1
-        var x = i
-        while (j * j <= i) {
-            if (i % j == 0) {
-                c += j
-                if (i / j != j) c += i / j
-            }
-            j++
-        }
-
-        if (c !in map)
-            map[c] = i
-        if (c > 10_000_000) {
-            break
-        }
-    }
 }
 
 fun initC() {
@@ -53,9 +35,13 @@ fun initC() {
 
 fun runTestC(): String {
     scanner.apply {
-        val c = nextInt()
+        n = nextInt()
+        val res = IntArray(n)
+        val set = HashSet<Int>()
 
-        return if (c in map) map[c].toString() else "-1"
+
+
+        return ""
     }
 }
 

@@ -27,7 +27,7 @@ fun B() {
 
         for (TEST in 1..T) {
             initB()
-            println(runTestB(T, TEST))
+            print(runTestB(T, TEST))
         }
     }
 }
@@ -83,45 +83,64 @@ fun initB() {
 
 fun runTestB(T: Int, t: Int): String {
     scanner.apply {
-        val (n, l) = nextInt() to nextInt()
-        var (r, s) = nextInt() to nextInt()
+        n = nextInt()
+        val arr = IntArray(n)
+        for (i in 0 until n) {
+            arr[i] = nextInt()
+        }
 
-        val perm = HashSet<Int>()
+        if (n < 2) {
+            return "0"
+        }
 
-        for (i in (r - l) downTo 0) {
-            for (j in min((s - ((i + 1) * i) / 2), n - (r - l - i)) downTo (i)) {
-                if (j !in perm) {
-                    perm.add(j)
-                    s -= j
-                    break
+        val builder = StringBuilder()
+        builder.appendLine(n / 2 + n % 2)
+
+        var i = 1
+        while (i < n) {
+            var minA = min(arr[i], arr[i - 1])
+            var maxA = minA + (minA % 2 + 1)
+            if (i + 1 < n) {
+                if (maxA == arr[i + 1]) {
+                    maxA += 2
                 }
             }
+            if (i - 2 >= 0) {
+                if (arr[i - 2] == minA) {
+                    val t = minA
+                    minA = maxA
+                    maxA = t
+                }
+            }
+            builder.appendLine("$i ${i + 1} $minA $maxA")
+
+            arr[i] = maxA
+
+            i += 2
         }
 
-        if (perm.size != r - l + 1 || s != 0) {
-            return "-1"
-        }
-        val res = IntArray(n)
-        var index = 1
-        for (i in 0 until (l - 1)) {
-            while (index in perm) {
-                index++
+        if (n % 2 == 1) {
+            val minA = min(arr[n - 1], arr[n - 2])
+            if (n - 3 >= 0 && arr[n - 3] == minA) {
+                builder.appendLine("${n - 1} $n ${minA + (minA % 2 + 1)} $minA")
+            } else {
+                builder.appendLine("${n - 1} $n $minA ${minA + (minA % 2 + 1)}")
             }
-            res[i] = index++
-        }
-        var j = l - 1
-        for (a in perm) {
-            res[j++] = a
-        }
-        for (i in r until n) {
-            while (index in perm) {
-                index++
-            }
-            res[i] = index++
         }
 
-        return res.joinToString(" ")
+        return builder.toString()
     }
+}
+
+fun gcd(a: Int, b: Int): Int {
+    var (l, r) = min(a, b) to max(a, b)
+    while (l > 1) {
+        val a = l
+        l = r % l
+        r = a
+    }
+
+    return r
 }
 
 fun solveB(str: String, k: Int) {
