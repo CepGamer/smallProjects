@@ -22,13 +22,40 @@ var debug = false
 fun B() {
     scanner.apply {
         val T = nextInt()
+        nextLine()
 
         preInitB()
 
         for (TEST in 1..T) {
             initB()
-            print(runTestB(T, TEST))
+            println(runTestB(T, TEST))
         }
+    }
+}
+
+fun preInitB() {
+}
+
+fun initB() {
+}
+
+fun runTestB(T: Int, t: Int): String {
+    scanner.apply {
+        val line = nextLine()
+        var (r, l) = 0 to 0
+        var acc = 0L
+
+        while (r < line.length) {
+            if (line[r] == '0') {
+                if (l != r) {
+                    acc += r - l + 1
+                }
+                l++
+            }
+            r++
+        }
+
+        return acc.toString()
     }
 }
 
@@ -74,75 +101,3 @@ class FastScanner {
         `in` = BufferedInputStream(System.`in`, BS)
     }
 }
-
-fun preInitB() {
-}
-
-fun initB() {
-}
-
-fun runTestB(T: Int, t: Int): String {
-    scanner.apply {
-        n = nextInt()
-        val arr = IntArray(n)
-        for (i in 0 until n) {
-            arr[i] = nextInt()
-        }
-
-        if (n < 2) {
-            return "0"
-        }
-
-        val builder = StringBuilder()
-        builder.appendLine(n / 2 + n % 2)
-
-        var i = 1
-        while (i < n) {
-            var minA = min(arr[i], arr[i - 1])
-            var maxA = minA + (minA % 2 + 1)
-            if (i + 1 < n) {
-                if (maxA == arr[i + 1]) {
-                    maxA += 2
-                }
-            }
-            if (i - 2 >= 0) {
-                if (arr[i - 2] == minA) {
-                    val t = minA
-                    minA = maxA
-                    maxA = t
-                }
-            }
-            builder.appendLine("$i ${i + 1} $minA $maxA")
-
-            arr[i] = maxA
-
-            i += 2
-        }
-
-        if (n % 2 == 1) {
-            val minA = min(arr[n - 1], arr[n - 2])
-            if (n - 3 >= 0 && arr[n - 3] == minA) {
-                builder.appendLine("${n - 1} $n ${minA + (minA % 2 + 1)} $minA")
-            } else {
-                builder.appendLine("${n - 1} $n $minA ${minA + (minA % 2 + 1)}")
-            }
-        }
-
-        return builder.toString()
-    }
-}
-
-fun gcd(a: Int, b: Int): Int {
-    var (l, r) = min(a, b) to max(a, b)
-    while (l > 1) {
-        val a = l
-        l = r % l
-        r = a
-    }
-
-    return r
-}
-
-fun solveB(str: String, k: Int) {
-}
-
