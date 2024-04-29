@@ -19,6 +19,7 @@ fun C() {
     scanner.apply {
         preInitC()
         val T = nextInt()
+        nextLine()
         for (TEST in 1..T) {
             initC()
             println(runTestC())
@@ -35,13 +36,24 @@ fun initC() {
 
 fun runTestC(): String {
     scanner.apply {
-        n = nextInt()
-        val res = IntArray(n)
-        val set = HashSet<Int>()
+        val s = nextLine()
 
+        val map = hashMapOf<Char, Long>()
+        s.forEach {
+            map[it] = (map[it] ?: 0) + 1
+        }
 
+        if (map.keys.size < 2) {
+            return "YES"
+        }
 
-        return ""
+        for (key in map.keys) {
+            if (map[key]!! > 1) {
+                return "NO"
+            }
+        }
+
+        return "YES"
     }
 }
 

@@ -1,5 +1,7 @@
 import java.lang.StringBuilder
 import java.util.*
+import kotlin.math.max
+import kotlin.math.min
 
 var enableDebug = false
 private val scanner = Scanner(System.`in`)
@@ -20,6 +22,7 @@ fun A() {
     scanner.apply {
         preInit()
         val T = nextInt()
+        nextLine()
         for (TEST in 1..T) {
             println(runTest(TEST, T))
         }
@@ -34,18 +37,22 @@ fun init(k: Int) {
 
 fun runTest(test: Int, t: Int): String {
     scanner.apply {
-        val a = nextLong()
-        val b = nextLong()
+        val a = nextLine()
 
-        if (b == 1L) {
-            return "NO"
+        val sumFun = { sum: Long, c: Char -> sum + (c - 'a' + 1) }
+
+        if (a.length % 2 == 0) {
+            return "Alice ${a.fold(0L, sumFun)}"
         }
 
-        val res = LongArray(3)
-        res[0] = a * b
-        res[1] = a
-        res[2] = res[0] + res[1]
-        return "YES\n" + res.joinToString(" ") + "\n"
+        val (left, lb) = a.take(a.length - 1).fold(0L, sumFun) to (a.last() - 'a' + 1)
+        val (right, rb) = a.takeLast(a.length - 1).fold(0L, sumFun) to (a[0] - 'a' + 1)
+
+        if (left > lb || right > rb) {
+            return "Alice ${max(left, right) - min(lb, rb)}"
+        } else {
+            return "Bob ${max(lb, rb) - min(left, right)}"
+        }
     }
 }
 
