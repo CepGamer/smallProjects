@@ -3,13 +3,15 @@ package smallPrograms.main
 import A
 import B
 import C
+import D
 import SadJavaClass
 
 enum class WhatToDo {
     JAVA,
     A,
     B,
-    C
+    C,
+    D
 }
 
 object Main {
@@ -28,6 +30,8 @@ object Main {
                 B()
             WhatToDo.C ->
                 C()
+            WhatToDo.D ->
+                D()
         }
     }
 }

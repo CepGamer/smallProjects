@@ -16,69 +16,31 @@ private lateinit var divisorByInt: List<Pair<Int, ArrayDeque<Int>>>
 
 private lateinit var dynamic: BooleanArray
 
-var debug = false
-
-fun B() {
+fun D() {
     scanner.apply {
         val T = nextInt()
         nextLine()
 
-        preInitB()
-
         for (TEST in 1..T) {
-            initB()
-            println(runTestB(T, TEST))
+            println(runTestD(T, TEST))
         }
     }
 }
 
-fun preInitB() {
-}
-
-fun initB() {
-}
-
-fun runTestB(T: Int, t: Int): String {
+private fun runTestD(T: Int, t: Int): String {
     scanner.apply {
         nextLine()
         val line = nextLine()
 
-        return if (line.count { it == 'U' } % 2 == 0) "NO" else "YES"
-    }
-}
-
-val results = HashMap<String, Boolean>()
-
-fun step(coins: String): Boolean {
-    if (!coins.contains("U")) {
-        return false
-    }
-
-    if (coins in results) {
-        return results[coins]!!
-    }
-
-    for (i in coins.indices) {
-        if (coins[i] == 'U') {
-            val builder = StringBuilder(coins)
-
-            builder[(coins.length + i - 1) % coins.length] = replace(builder[(coins.length + i - 1) % coins.length])
-            builder[(coins.length + i + 1) % coins.length] = replace(builder[(coins.length + i + 1) % coins.length])
-
-            if (!step(builder.removeRange(i, i + 1).toString())) {
-                results[coins] = true
-                return true
-            }
+        if (!line.contains("U")) {
+            return "NO"
         }
-    }
 
-    results[coins] = false
-    return false
+        return if (step(line)) "YES" else "NO"
+    }
 }
 
-fun replace(c: Char) = if (c == 'D') 'U' else 'D'
-
-class FastScanner {
+class FastScannerD {
     private val BS = 1 shl 16
     private val NC = 0.toChar()
     private val buf = ByteArray(BS)

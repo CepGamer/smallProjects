@@ -6,7 +6,7 @@ private val scanner = Scanner(System.`in`)
 
 private lateinit var arr: IntArray
 
-fun C() {
+fun main() {
     scanner.apply {
         val T = nextInt()
         nextLine()
@@ -18,73 +18,39 @@ fun C() {
 
 fun runTestC(): String {
     scanner.apply {
-        val (n, k) = nextInt() to nextInt()
-        arr = IntArray(n) { nextInt() }
-        val modified = BooleanArray(n)
-        val queue = TreeMap<Int, MutableSet<Int>>()
+        val (n, k) = nextInt() to nextLong()
+        val arr = LongArray(n) { nextLong() }
 
-        for (i in 0 until n - 1) {
-            val diff = abs(arr[i] - arr[i + 1])
-            addToQueue(queue, diff, i)
+        var kk = k
+        arr.sort()
+        var minVal = arr[0]
+        var (l, r) = 0 to 1
+        while (l < n && r < n) {
+            while (r < n && arr[l] == arr[r]) {
+                r++
+            }
+            l = r
+
+            val coef = if (r >= n) kk / r else min(kk / r, arr[r] - arr[0])
+            kk -= r * coef
+            arr[0] += coef
+
+            if (kk < r) break
         }
 
-        for (i in 0 until k) {
-            if (queue.size == 0) {
-                break
-            }
-            val entry = queue.lastEntry()
-            val big = entry.value.minOrNull()!!
-            entry.value.remove(big)
-
-            if (entry.value.size == 0) {
-                queue.remove(entry.key)
-            }
-
-            val m = min(arr[big], arr[big + 1])
-            if (big > 0) {
-                val key = abs(arr[big] - arr[big - 1])
-                queue[key]?.remove(big)
-                addToQueue(queue, abs(m - arr[big - 1]), big - 1)
-
-                if (queue[key]?.size == 0) {
-                    queue.remove(key)
-                }
-            }
-
-            if (big + 2 < arr.size) {
-                val key = abs(arr[big + 1] - arr[big + 2])
-                queue[key]?.remove(big + 1)
-                addToQueue(queue, abs(m - arr[big + 2]), big + 1)
-
-                if (queue[key]?.size == 0) {
-                    queue.remove(key)
-                }
-            }
-            arr[big] = m
-            arr[big + 1] = m
-            modified[big] = true
+        if (kk > n) {
+            arr[0] += kk / n
+            kk %= n
         }
 
-        var min = if (modified[0]) arr[0] else Int.MAX_VALUE
-        for (i in 0 until n) {
-            if (!modified[i]) {
-                min = Int.MAX_VALUE
-                continue
-            } else {
-                min = min(min, arr[i])
-                arr[i] = min
-            }
+        l = 0
+        while (l < n) {
+            if (arr[0] < arr[l]) break
+            l++
         }
 
-        return arr.fold(0L, Long::plus).toString()
+        if (l < n) kk += n - l
+
+        return ((arr[0] - 1) * (n - 1) + arr[0] + kk).toString()
     }
-}
-
-fun addToQueue(queue: TreeMap<Int, MutableSet<Int>>, diff: Int, i: Int) {
-    if (diff in queue) {
-        queue[diff]?.plusAssign(i)
-    } else {
-        queue[diff] = mutableSetOf(i)
-    }
-
 }

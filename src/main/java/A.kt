@@ -29,16 +29,23 @@ fun init(k: Int) {
 fun runTest(test: Int, t: Int): String {
     scanner.apply {
         n = nextInt()
-        for (i in 1..n) {
-            array[i] = nextInt()
-        }
+        val arr = IntArray(n) {nextInt()}
+        val brr = IntArray(n) {nextInt()}
 
-        for (i in 1..n) {
-            if (i == array[array[i]]) {
-                return "2"
+        var (a, b) = n - 1 to n - 1
+        var acc = 0
+
+        while (a >= 0 && b >= 0) {
+            if (brr[b] >= arr[a]) {
+                a--
+                b--
+            } else {
+                a--
+                acc++
             }
         }
-        return "3"
+
+        return acc.toString()
     }
 }
 
