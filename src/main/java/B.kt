@@ -40,10 +40,27 @@ fun initB() {
 
 fun runTestB(T: Int, t: Int): String {
     scanner.apply {
+        val (n, m) = nextInt() to nextInt()
         nextLine()
-        val line = nextLine()
+        val a = nextLine()
+        val b = nextLine()
 
-        return if (line.count { it == 'U' } % 2 == 0) "NO" else "YES"
+        var (l, r) = 0 to 0
+
+        while (r < m && a[0] != b[r]) {
+            r++
+        }
+        while (l < n && r < m) {
+            while (r < m&& a[l] != b[r]) {
+                r++
+            }
+            if (r < m) {
+                l++
+            }
+            r++
+        }
+
+        return l.toString()
     }
 }
 

@@ -6,8 +6,8 @@ private val scanner = Scanner(System.`in`)
 private val size = 100_000 + 10
 
 private var n: Int = 0
-private val N = 50 + 1
-private val array = IntArray(N)
+private val N = 1001
+private val array = IntArray(N) { 1 }
 
 fun A() {
     scanner.apply {
@@ -29,25 +29,18 @@ fun init(k: Int) {
 fun runTest(test: Int, t: Int): String {
     scanner.apply {
         n = nextInt()
-        val arr = IntArray(n) {nextInt()}
-        val brr = IntArray(n) {nextInt()}
 
-        var (a, b) = n - 1 to n - 1
-        var acc = 0
-
-        while (a >= 0 && b >= 0) {
-            if (brr[b] >= arr[a]) {
-                a--
-                b--
-            } else {
-                a--
-                acc++
-            }
-        }
-
-        return acc.toString()
+        return (n - 1).toString()
     }
 }
 
-fun solve(heights: IntArray, k: Int) {
+private fun gcd(x:Int, y: Int): Int {
+    var (a, b) = min(x, y) to max(x, y)
+    while (a > 1 && b != a) {
+        val t = a
+        a = b % a
+        b = t
+    }
+
+    return if (a == 0) b else a
 }

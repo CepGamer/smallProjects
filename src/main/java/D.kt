@@ -2,6 +2,8 @@ import java.io.BufferedInputStream
 import java.util.*
 import kotlin.collections.ArrayDeque
 import kotlin.collections.HashMap
+import kotlin.math.max
+import kotlin.math.min
 
 private val scanner = Scanner(System.`in`)
 private val size = 100_000 + 10
@@ -16,7 +18,7 @@ private lateinit var divisorByInt: List<Pair<Int, ArrayDeque<Int>>>
 
 private lateinit var dynamic: BooleanArray
 
-fun D() {
+fun main() {
     scanner.apply {
         val T = nextInt()
         nextLine()
@@ -29,14 +31,29 @@ fun D() {
 
 private fun runTestD(T: Int, t: Int): String {
     scanner.apply {
-        nextLine()
-        val line = nextLine()
+        val (n, k) = nextInt() to nextInt()
+        var (p, q) = nextInt() to nextInt()
+        val perm = IntArray(n + 1) { if (it > 0) nextInt() else 0 }
+        val ar = LongArray(n + 1) { if (it > 0) nextLong() else 0L }
 
-        if (!line.contains("U")) {
-            return "NO"
+        var maxB = 0L
+        var maxS = 0L
+
+        var curB = 0L
+        var curS = 0L
+
+        for (i in 0..min(n, k)) {
+            maxB = max(maxB, curB + (ar[p] * (k - i)))
+            maxS = max(maxS, curS + (ar[q] * (k - i)))
+
+            curB += ar[p]
+            curS += ar[q]
+
+            p = perm[p]
+            q = perm[q]
         }
 
-        return if (step(line)) "YES" else "NO"
+        return if (maxB > maxS) "Bodya" else if (maxS > maxB) "Sasha" else "Draw"
     }
 }
 
