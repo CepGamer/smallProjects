@@ -18,7 +18,7 @@ private lateinit var divisorByInt: List<Pair<Int, ArrayDeque<Int>>>
 
 private lateinit var dynamic: BooleanArray
 
-fun main() {
+fun D() {
     scanner.apply {
         val T = nextInt()
         nextLine()

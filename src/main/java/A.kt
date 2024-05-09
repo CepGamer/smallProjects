@@ -30,17 +30,23 @@ fun runTest(test: Int, t: Int): String {
     scanner.apply {
         n = nextInt()
 
-        return (n - 1).toString()
-    }
-}
+        val res = Array(n) { arrayOf(0, 0) }
+        res[0][0] = 1
+        res[0][1] = 1
+        res[n - 1] = arrayOf(n, n)
 
-private fun gcd(x:Int, y: Int): Int {
-    var (a, b) = min(x, y) to max(x, y)
-    while (a > 1 && b != a) {
-        val t = a
-        a = b % a
-        b = t
-    }
+        for (i in 1 until n - 1) {
+            if (i % 4 == 1) {
+                res[i] = arrayOf(res[i - i / 4][0] + i, res[i - i / 4][1])
+            } else if (i % 4 == 2) {
+                res[i] = arrayOf(res[n - i / 4][0] - i, res[n - i / 4][1])
+            } else if (i % 4 == 3) {
+                res[i] = arrayOf(res[i - i / 4][0], res[0][1] + i)
+            }else {
+                res[i] = arrayOf(res[n - i / 4][0], res[n - i / 4][1] - i)
+            }
+        }
 
-    return if (a == 0) b else a
+        return res.joinToString("\n") { it.joinToString(" ") }
+    }
 }
