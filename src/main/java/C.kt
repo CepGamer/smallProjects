@@ -1,4 +1,5 @@
 import java.util.*
+import kotlin.collections.HashMap
 import kotlin.math.max
 import kotlin.math.min
 
@@ -18,14 +19,28 @@ fun C() {
 
 fun runTestC(): String {
     scanner.apply {
-        val (t1, t2) = nextInt() to nextInt()
-        val (t3, t4) = nextInt() to nextInt()
-        val (a, b) = min(t1, t2) to max(t1, t2)
-        val (c, d) = min(t3, t4) to max(t3, t4)
+        val n = nextInt()
+        val arr = IntArray(n) { nextInt() }
+        val cycle = HashMap<Int, MutableList<Int>>()
 
-        val x1 = c in a..b
-        val x2 = d in a..b
+        for (i in arr.indices) {
+            val x = arr[i] shr 2
+            if (x !in cycle) {
+                cycle[x] = mutableListOf()
+            }
+            cycle[x]!!.add(i)
+        }
 
-        return if (x1 xor x2) "YES" else "NO"
+        for (c in cycle.values) {
+            if (c.size > 1) {
+                val nums = IntArray(c.size) { arr[c[it]] }.sorted()
+                var j = 0
+                for (i in c) {
+                    arr[i] = nums[j++]
+                }
+            }
+        }
+
+        return arr.joinToString(" ")
     }
 }

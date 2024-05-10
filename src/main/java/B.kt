@@ -2,19 +2,13 @@ import java.io.BufferedInputStream
 import java.util.*
 import kotlin.collections.ArrayDeque
 import kotlin.collections.HashMap
+import kotlin.math.floor
+import kotlin.math.sqrt
 
 private val scanner = Scanner(System.`in`)
 private val size = 100_000 + 10
 
 private var n: Int = 0
-
-private lateinit var Int: BooleanArray
-private lateinit var edges: Array<ArrayDeque<Int>>
-
-private lateinit var divisors: Array<ArrayDeque<Int>>
-private lateinit var divisorByInt: List<Pair<Int, ArrayDeque<Int>>>
-
-private lateinit var dynamic: BooleanArray
 
 var debug = false
 
@@ -40,18 +34,22 @@ fun initB() {
 
 fun runTestB(T: Int, t: Int): String {
     scanner.apply {
-        val s = nextLine()
-        for (i in 1 until s.length) {
-            if (s[i] != s[0]) {
-                val x = StringBuilder(s)
-                val c = s[0]
-                x[0] = s[i]
-                x[i] = c
-                return "YES\n${x}"
+        val n = nextLong()
+        val (lower, upper) = n * n to (n + 1) * (n + 1)
+
+        var acc = 0
+        var y = n
+
+        for (x in 1L..n) {
+            while (x * x + y * y >= upper) y--
+            while (y >= 0 && x * x + y * y in lower until upper) {
+                acc += 4
+                y--
             }
+            y++
         }
 
-        return "NO\n"
+        return (acc).toString()
     }
 }
 
