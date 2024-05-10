@@ -31,29 +31,17 @@ fun D() {
 
 private fun runTestD(T: Int, t: Int): String {
     scanner.apply {
-        val (n, k) = nextInt() to nextInt()
-        var (p, q) = nextInt() to nextInt()
-        val perm = IntArray(n + 1) { if (it > 0) nextInt() else 0 }
-        val ar = LongArray(n + 1) { if (it > 0) nextLong() else 0L }
-
-        var maxB = 0L
-        var maxS = 0L
-
-        var curB = 0L
-        var curS = 0L
-
-        for (i in 0..min(n, k)) {
-            maxB = max(maxB, curB + (ar[p] * (k - i)))
-            maxS = max(maxS, curS + (ar[q] * (k - i)))
-
-            curB += ar[p]
-            curS += ar[q]
-
-            p = perm[p]
-            q = perm[q]
+        val s = nextLine()
+        var c = 1
+        var hasSkip = false
+        for (i in 1 until s.length) {
+            hasSkip = hasSkip || (s[i] == '1') && (s[i - 1] == '0')
+            if (s[i] != s[i - 1]) {
+                c++
+            }
         }
 
-        return if (maxB > maxS) "Bodya" else if (maxS > maxB) "Sasha" else "Draw"
+        return (c - (if (hasSkip) 1 else 0)).toString()
     }
 }
 

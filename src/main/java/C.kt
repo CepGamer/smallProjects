@@ -1,4 +1,6 @@
 import java.util.*
+import kotlin.math.max
+import kotlin.math.min
 
 private val scanner = Scanner(System.`in`)
 
@@ -16,15 +18,14 @@ fun C() {
 
 fun runTestC(): String {
     scanner.apply {
-        val n = nextInt() - 1
-        val xr = LongArray(n) { nextLong() }
-        val ar = LongArray(n + 1)
+        val (t1, t2) = nextInt() to nextInt()
+        val (t3, t4) = nextInt() to nextInt()
+        val (a, b) = min(t1, t2) to max(t1, t2)
+        val (c, d) = min(t3, t4) to max(t3, t4)
 
-        ar[0] = 501
-        for (i in 0 until n) {
-            ar[i + 1] = ar[i] + xr[i]
-        }
+        val x1 = c in a..b
+        val x2 = d in a..b
 
-        return ar.joinToString(" ")
+        return if (x1 xor x2) "YES" else "NO"
     }
 }
