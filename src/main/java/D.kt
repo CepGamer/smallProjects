@@ -32,25 +32,43 @@ fun D() {
 private fun runTestD(T: Int, t: Int): String {
     scanner.apply {
         val n = nextInt()
-        var acc = 0L
-        val prev = LongArray(2)
+        val a = LongArray(n) { nextLong() }
+        var c = 0
+        var res = 0L
 
-        for (i in 0 until n) {
-            val a = nextLong()
-            if (prev[i % 2] != 0L) {
-                if (prev[2 - (i % 2)] != 0L) {
-                    acc += prev.sum() * 2
-                    prev[0] = 0
-                    prev[1] = 0
-                } else {
-                    acc += prev.sum()
-                }
-            } else {
-                prev[i % 2] = a
+        while (c < n) {
+            while (c < n && a[c] == 0L) c++
+            if (c >= n) break
+
+            var rc = c + 1
+            var acc = a[c]
+            while (rc < n && a[rc] != 0L) {
+                acc += a[rc]
+                rc++
             }
+            val maxVals = Array(rc - c) { a[c + it] to c + it }
+            maxVals.sortBy { it.first }
+
+            val l = rc - c
+            res += when {
+                l == 1 -> a[c]
+                l % 2 == 0 -> acc * 2
+                else -> {
+                    var k = 0L
+                    for (i in (maxVals.size - 1) downTo 0) {
+                        val (x, j) = maxVals[i]
+                        if ((j - c) % 2 == 0) {
+                            k = (acc - x) * 2 + x
+                            break
+                        }
+                    }
+                    k
+                }
+            }
+            c = rc
         }
 
-        return acc.toString()
+        return res.toString()
     }
 }
 
