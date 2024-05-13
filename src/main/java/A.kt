@@ -29,25 +29,18 @@ fun init(k: Int) {
 fun runTest(test: Int, t: Int): String {
     scanner.apply {
         n = nextInt()
-        val (k, q) = nextInt() to nextInt()
+        var mmin = 5
+        var a = 0
 
-        val a = IntArray(k + 1) { if (it == 0) 0 else nextInt() }
-        val b = IntArray(k + 1) { if (it == 0) 0 else nextInt() }
-
-        val result = StringBuilder()
-        for (i in 1..q) {
-            val p = nextInt()
-            val t1 = a.binarySearch(p)
-            val r = if (t1 >= 0) t1 else t1.inv() - 1
-
-            if (r >= k) {
-                result.append(b[r])
-            } else {
-                result.append(b[r] + ((p.toLong() - a[r]) * (b[r + 1].toLong() - b[r])) / (a[r + 1].toLong() - a[r]))
+        while (a <= 25) {
+            if (a > n) {
+                break
             }
-            result.append(' ')
+
+            mmin = min(mmin, (n - a) % 3)
+            a += 5
         }
 
-        return result.toString()
+        return mmin.toString()
     }
 }

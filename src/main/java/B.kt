@@ -34,22 +34,13 @@ fun initB() {
 
 fun runTestB(T: Int, t: Int): String {
     scanner.apply {
-        val n = nextLong()
-        val (lower, upper) = n * n to (n + 1) * (n + 1)
+        val (k, m) = nextInt() to nextInt()
+        val totPhases = m / k
+        val phase = totPhases % 3
 
-        var acc = 0
-        var y = n
+        val timeLeft = (totPhases + 2 - phase) * k
 
-        for (x in 1L..n) {
-            while (x * x + y * y >= upper) y--
-            while (y >= 0 && x * x + y * y in lower until upper) {
-                acc += 4
-                y--
-            }
-            y++
-        }
-
-        return (acc).toString()
+        return (if (phase == 2) 0 else (timeLeft - m)).toString()
     }
 }
 

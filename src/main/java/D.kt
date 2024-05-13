@@ -31,17 +31,26 @@ fun D() {
 
 private fun runTestD(T: Int, t: Int): String {
     scanner.apply {
-        val s = nextLine()
-        var c = 1
-        var hasSkip = false
-        for (i in 1 until s.length) {
-            hasSkip = hasSkip || (s[i] == '1') && (s[i - 1] == '0')
-            if (s[i] != s[i - 1]) {
-                c++
+        val n = nextInt()
+        var acc = 0L
+        val prev = LongArray(2)
+
+        for (i in 0 until n) {
+            val a = nextLong()
+            if (prev[i % 2] != 0L) {
+                if (prev[2 - (i % 2)] != 0L) {
+                    acc += prev.sum() * 2
+                    prev[0] = 0
+                    prev[1] = 0
+                } else {
+                    acc += prev.sum()
+                }
+            } else {
+                prev[i % 2] = a
             }
         }
 
-        return (c - (if (hasSkip) 1 else 0)).toString()
+        return acc.toString()
     }
 }
 
