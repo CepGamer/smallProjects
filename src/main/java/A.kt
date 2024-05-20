@@ -28,19 +28,11 @@ fun init(k: Int) {
 
 fun runTest(test: Int, t: Int): String {
     scanner.apply {
-        n = nextInt()
-        var mmin = 5
-        var a = 0
+        val (a, b) = nextInt() to nextInt()
 
-        while (a <= 25) {
-            if (a > n) {
-                break
-            }
+        val count = b / 2 + b % 2
+        val left = max(0, a - (7 * count + (b % 2) * 4))
 
-            mmin = min(mmin, (n - a) % 3)
-            a += 5
-        }
-
-        return mmin.toString()
+        return (count + left / 15 + (if (left % 15 > 0) 1 else 0)).toString()
     }
 }

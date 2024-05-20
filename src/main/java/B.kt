@@ -34,46 +34,32 @@ fun initB() {
 
 fun runTestB(T: Int, t: Int): String {
     scanner.apply {
-        val (k, m) = nextInt() to nextInt()
-        val totPhases = m / k
-        val phase = totPhases % 3
+        val n = nextInt()
+        nextLine()
 
-        val timeLeft = (totPhases + 2 - phase) * k
-
-        return (if (phase == 2) 0 else (timeLeft - m)).toString()
-    }
-}
-
-val results = HashMap<String, Boolean>()
-
-fun step(coins: String): Boolean {
-    if (!coins.contains("U")) {
-        return false
-    }
-
-    if (coins in results) {
-        return results[coins]!!
-    }
-
-    for (i in coins.indices) {
-        if (coins[i] == 'U') {
-            val builder = StringBuilder(coins)
-
-            builder[(coins.length + i - 1) % coins.length] = replace(builder[(coins.length + i - 1) % coins.length])
-            builder[(coins.length + i + 1) % coins.length] = replace(builder[(coins.length + i + 1) % coins.length])
-
-            if (!step(builder.removeRange(i, i + 1).toString())) {
-                results[coins] = true
-                return true
+        val s = nextLine()
+        val a = IntArray(26)
+        for (c in s) {
+            a[c - 'a']++
+        }
+        val rb = StringBuilder()
+        var l = 0
+        for (i in 0 until 26) {
+            if (a[i] > 0) {
+                rb.append('a' + i)
+                a[i] = l++
             }
         }
+        val r = rb.toString()
+
+        val rs = StringBuilder()
+        for (c in s) {
+            rs.append(r[r.length - a[c - 'a'] - 1])
+        }
+
+        return rs.toString()
     }
-
-    results[coins] = false
-    return false
 }
-
-fun replace(c: Char) = if (c == 'D') 'U' else 'D'
 
 class FastScanner {
     private val BS = 1 shl 16

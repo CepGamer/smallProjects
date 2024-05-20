@@ -32,43 +32,71 @@ fun D() {
 private fun runTestD(T: Int, t: Int): String {
     scanner.apply {
         val n = nextInt()
-        val a = LongArray(n) { nextLong() }
-        var c = 0
-        var res = 0L
+        nextLine()
+        val s = nextLine()
 
-        while (c < n) {
-            while (c < n && a[c] == 0L) c++
-            if (c >= n) break
+        val rover = BooleanArray(n)
+        var wasHeli = false
+        var (dx, dy) = 0 to 0
 
-            var rc = c + 1
-            var acc = a[c]
-            while (rc < n && a[rc] != 0L) {
-                acc += a[rc]
-                rc++
-            }
-            val maxVals = Array(rc - c) { a[c + it] to c + it }
-            maxVals.sortBy { it.first }
-
-            val l = rc - c
-            res += when {
-                l == 1 -> a[c]
-                l % 2 == 0 -> acc * 2
-                else -> {
-                    var k = 0L
-                    for (i in (maxVals.size - 1) downTo 0) {
-                        val (x, j) = maxVals[i]
-                        if ((j - c) % 2 == 0) {
-                            k = (acc - x) * 2 + x
-                            break
-                        }
+        for (i in s.indices) {
+            when (s[i]) {
+                'N' -> if (dx >= 0) {
+                    if (dx == 0 && !wasHeli) {
+                        wasHeli = true
+                        dx++
+                    } else {
+                        rover[i] = true
+                        dx--
                     }
-                    k
+                } else {
+                    wasHeli = true
+                    dx++
+                }
+
+                'S' -> if (dx <= 0) {
+                    if (dx == 0 && !wasHeli) {
+                        wasHeli = true
+                        dx--
+                    } else {
+                        rover[i] = true
+                        dx++
+                    }
+                } else {
+                    dx--
+                    wasHeli = true
+                }
+
+                'E' -> if (dy >= 0) {
+                    if (dy == 0 && !wasHeli) {
+                        wasHeli = true
+                        dy++
+                    } else {
+                        rover[i] = true
+                        dy--
+                    }
+                } else {
+                    wasHeli = true
+                    dy++
+                }
+
+                'W' -> if (dy <= 0) {
+                    if (dy == 0 && !wasHeli) {
+                        wasHeli = true
+                        dy--
+                    } else {
+                        rover[i] = true
+                        dy++
+                    }
+                } else {
+                    wasHeli = true
+                    dy--
                 }
             }
-            c = rc
         }
 
-        return res.toString()
+        return if (dx == 0 && dy == 0 && rover.any { it } && rover.any { !it }) rover.map { if (it) 'R' else 'H' }
+            .joinToString("") else "NO"
     }
 }
 
