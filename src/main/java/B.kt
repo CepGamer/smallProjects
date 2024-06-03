@@ -1,9 +1,6 @@
 import java.io.BufferedInputStream
 import java.util.*
-import kotlin.collections.ArrayDeque
-import kotlin.collections.HashMap
-import kotlin.math.floor
-import kotlin.math.sqrt
+import kotlin.math.min
 
 private val scanner = Scanner(System.`in`)
 private val size = 100_000 + 10
@@ -34,22 +31,41 @@ fun initB() {
 
 fun runTestB(T: Int, t: Int): String {
     scanner.apply {
-        val n = nextInt()
-        val (f, k) = nextInt() to nextInt()
+        val (n, m) = nextLong() to nextLong()
+        val k = nextInt()
 
-        val dice = IntArray(n) { nextInt() }
-        val fVal = dice[f - 1]
-        val counts = IntArray(101)
-        for (a in dice) {
-            counts[a]++
+        val f = Array(k) { it to (nextLong() to nextLong()) }.sortedBy { it.second.second }.sortedBy { it.second.first }
+        val minRow = LongArray(k + 1)
+        val minCol = LongArray(k + 1)
+
+        minRow[k] = n
+        minCol[k] = m
+        minRow[k - 1] = f[k - 1].second.first
+        minCol[k - 1] = f[k - 1].second.second
+
+        for (i in (k - 2) downTo 0) {
+            minRow[i] = min(minRow[i + 1], f[i].second.first)
+            minCol[i] = min(minCol[i + 1], f[i].second.second)
         }
 
-        var rems = k
-        for (i in 100 downTo (fVal + 1)) {
-            rems -= counts[i]
+        val res = LongArray(k)
+        var sum = 0L
+        var prevRow = 0L
+        for (i in 0..k) {
+            val a = if (i < k) f[i].second.first else n
+            sum += (a - prevRow) * (minCol[i] - 1)
+            prevRow = a
         }
 
-        return if (rems <= 0) "NO" else if (rems >= counts[fVal]) "YES" else "MAYBE"
+        var curCols = minCol[0]
+        var curA = f[0].second.first
+        for (i in 0 until k) {
+            val (a, b) = f[i].second
+            if (a != curA) curCols = b
+            if ((a < minRow[i + 1] && b < minCol[i + 1]) && b <= curCols) res[f[i].first] = 1
+        }
+
+        return "$sum\n" + res.joinToString(" ")
     }
 }
 
@@ -84,7 +100,7 @@ class FastScanner {
             c = char
         }
         var res = 0
-        while (c >= '0' && c <= '9') {
+        while (c in '0'..'9') {
             res = (res shl 3) + (res shl 1) + (c - '0')
             c = char
         }
