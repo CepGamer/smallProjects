@@ -39,7 +39,7 @@ fun runTestB(T: Int, t: Int): String {
         val minCol = LongArray(k + 1)
 
         minRow[k] = n
-        minCol[k] = m
+        minCol[k] = m + 1
         minRow[k - 1] = f[k - 1].second.first
         minCol[k - 1] = f[k - 1].second.second
 
@@ -61,8 +61,11 @@ fun runTestB(T: Int, t: Int): String {
         var curA = f[0].second.first
         for (i in 0 until k) {
             val (a, b) = f[i].second
-            if (a != curA) curCols = b
-            if ((a < minRow[i + 1] && b < minCol[i + 1]) && b <= curCols) res[f[i].first] = 1
+            if (a != curA) {
+                curA = a
+                curCols = b
+            }
+            if (b < minCol[i + 1] && b == curCols) res[f[i].first] = 1
         }
 
         return "$sum\n" + res.joinToString(" ")
@@ -111,3 +114,18 @@ class FastScanner {
         `in` = BufferedInputStream(System.`in`, BS)
     }
 }
+
+/*
+1
+2 5 9
+1 2
+1 5
+1 1
+2 2
+2 4
+2 5
+1 4
+2 3
+1 3
+
+ */
