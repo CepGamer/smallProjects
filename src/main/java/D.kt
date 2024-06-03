@@ -32,72 +32,51 @@ fun D() {
 private fun runTestD(T: Int, t: Int): String {
     scanner.apply {
         val n = nextInt()
-        nextLine()
-        val s = nextLine()
+        val a = IntArray(n) { nextInt() }
+        val lcds = IntArray(n - 1)
+        for (i in 1 until n) {
+            lcds[i - 1] = a[i - 1] lcd a[i]
+        }
 
-        val rover = BooleanArray(n)
-        var wasHeli = false
-        var (dx, dy) = 0 to 0
-
-        for (i in s.indices) {
-            when (s[i]) {
-                'N' -> if (dx >= 0) {
-                    if (dx == 0 && !wasHeli) {
-                        wasHeli = true
-                        dx++
-                    } else {
-                        rover[i] = true
-                        dx--
-                    }
-                } else {
-                    wasHeli = true
-                    dx++
-                }
-
-                'S' -> if (dx <= 0) {
-                    if (dx == 0 && !wasHeli) {
-                        wasHeli = true
-                        dx--
-                    } else {
-                        rover[i] = true
-                        dx++
-                    }
-                } else {
-                    dx--
-                    wasHeli = true
-                }
-
-                'E' -> if (dy >= 0) {
-                    if (dy == 0 && !wasHeli) {
-                        wasHeli = true
-                        dy++
-                    } else {
-                        rover[i] = true
-                        dy--
-                    }
-                } else {
-                    wasHeli = true
-                    dy++
-                }
-
-                'W' -> if (dy <= 0) {
-                    if (dy == 0 && !wasHeli) {
-                        wasHeli = true
-                        dy--
-                    } else {
-                        rover[i] = true
-                        dy++
-                    }
-                } else {
-                    wasHeli = true
-                    dy--
-                }
+        val restIsNonDesc = BooleanArray(n - 1)
+        restIsNonDesc[n - 2] = true
+        for (i in n - 3 downTo 0) {
+            if (lcds[i + 1] >= lcds[i]) restIsNonDesc[i] = true
+            else {
+                restIsNonDesc[i] = false
+                break
             }
         }
 
-        return if (dx == 0 && dy == 0 && rover.any { it } && rover.any { !it }) rover.map { if (it) 'R' else 'H' }
-            .joinToString("") else "NO"
+        var isNonDesc = true
+        if (restIsNonDesc[1]) return "YES"
+
+        for (i in 1 until (n - 1)) {
+            val x = (a[i - 1] lcd a[i + 1])
+            val leftOk = isNonDesc && (i == 1 || x >= lcds[i - 2])
+            val rightOk = (i == n - 2 || restIsNonDesc[i + 1]) && (i == n - 2 || x <= lcds[i + 1])
+            if (leftOk && rightOk) return "YES"
+
+            if (i > 1 && lcds[i - 1] < lcds[i - 2]) isNonDesc = false
+        }
+
+        return if (isNonDesc) "YES" else "NO"
+
     }
+}
+
+private infix fun Int.lcd(o: Int): Int {
+    var (a, b) = (max(this, o) to min(this, o))
+
+    while (a > 0 && b > 0) {
+        val t = a % b
+        if (t == 0) return b
+
+        a = b
+        b = t
+    }
+
+    return 1
 }
 
 class FastScannerD {

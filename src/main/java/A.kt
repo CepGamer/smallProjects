@@ -28,33 +28,14 @@ fun init(k: Int) {
 
 fun runTest(test: Int, t: Int): String {
     scanner.apply {
-        val (m, x) = nextInt() to nextLong()
-        val c = LongArray(m)
-        val h = IntArray(m)
-        val canBeBought = BooleanArray(m)
-        for (i in 0 until m) {
-            c[i] = nextLong()
-            h[i] = nextInt()
-            canBeBought[i] = c[i] <= x * i
+        val (_, m) = nextInt() to nextInt()
+        nextLine()
+        val s = nextLine()
+        val count = IntArray(7)
+        for (a in s) {
+            count[a - 'A']++
         }
 
-        val maxHArr = LongArray(100_000)
-        val possibleH = mutableSetOf(0)
-
-        for (i in 0 until m) {
-            val psh = mutableSetOf<Int>()
-            for (hs in possibleH.sortedDescending()) {
-                if (c[i] <= maxHArr[hs]) {
-                    maxHArr[hs + h[i]] = max(maxHArr[hs + h[i]], maxHArr[hs] - c[i])
-                    psh.add(hs + h[i])
-                }
-            }
-            possibleH.addAll(psh)
-            for (a in possibleH) {
-                maxHArr[a] += x
-            }
-        }
-
-        return possibleH.maxOrNull().toString()
+        return count.sumBy { max(0, m - it) }.toString()
     }
 }

@@ -35,29 +35,21 @@ fun initB() {
 fun runTestB(T: Int, t: Int): String {
     scanner.apply {
         val n = nextInt()
-        nextLine()
+        val (f, k) = nextInt() to nextInt()
 
-        val s = nextLine()
-        val a = IntArray(26)
-        for (c in s) {
-            a[c - 'a']++
-        }
-        val rb = StringBuilder()
-        var l = 0
-        for (i in 0 until 26) {
-            if (a[i] > 0) {
-                rb.append('a' + i)
-                a[i] = l++
-            }
-        }
-        val r = rb.toString()
-
-        val rs = StringBuilder()
-        for (c in s) {
-            rs.append(r[r.length - a[c - 'a'] - 1])
+        val dice = IntArray(n) { nextInt() }
+        val fVal = dice[f - 1]
+        val counts = IntArray(101)
+        for (a in dice) {
+            counts[a]++
         }
 
-        return rs.toString()
+        var rems = k
+        for (i in 100 downTo (fVal + 1)) {
+            rems -= counts[i]
+        }
+
+        return if (rems <= 0) "NO" else if (rems >= counts[fVal]) "YES" else "MAYBE"
     }
 }
 

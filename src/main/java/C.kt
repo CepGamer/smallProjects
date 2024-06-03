@@ -20,37 +20,39 @@ fun C() {
 fun runTestC(): String {
     scanner.apply {
         val n = nextInt()
-        val pairs = Array<MutableMap<Pair<Int, Int>, Long>>(3) { mutableMapOf() }
-        val triples = mutableMapOf<Triple<Int, Int, Int>, Long>()
-        var res = 0L
-        val arr = IntArray(n) { nextInt() }
-        var curPair = arr[0] to arr[1]
+        val a = IntArray(n) { nextInt() }
+        val b = IntArray(n) { nextInt() }
+        val m = nextInt()
+        val d = IntArray(m) { nextInt() }
 
-        for (i in 2 until n) {
-            val (a, b) = curPair
-            val c = arr[i]
+        if (d.last() !in b) return "NO"
 
-            res +=
-                (pairs[0][curPair] ?: 0) +
-                        (pairs[1][a to c] ?: 0) +
-                        (pairs[2][b to c] ?: 0) -
-                        (triples[Triple(a, b, c)] ?: 0) * 3
+        val missing = mutableMapOf<Int, Int>()
 
-            addOne(pairs[0], curPair)
-            addOne(pairs[1], a to c)
-            addOne(pairs[2], b to c)
-            addOne(triples, Triple(a, b, c))
-            curPair = b to c
+        for (i in 0 until n) {
+            if (a[i] != b[i]) missing addOne b[i]
         }
 
-        return res.toString()
+        for (x in d) {
+            missing remOne x
+        }
+
+        return if (missing.values.all { it <= 0 }) "YES" else "NO"
     }
 }
 
-private fun <T> addOne(to: MutableMap<T, Long>, p: T) {
-    if (p in to) {
-        to[p] = to[p]!! + 1L
+private infix fun <T> MutableMap<T, Int>.addOne(p: T) {
+    if (p in this) {
+        this[p] = this[p]!! + 1
     } else {
-        to[p] = 1L
+        this[p] = 1
+    }
+}
+
+private infix fun <T> MutableMap<T, Int>.remOne(p: T) {
+    if (p in this) {
+        this[p] = this[p]!! - 1
+    } else {
+        this[p] = -1
     }
 }

@@ -1,106 +1,46 @@
 import java.util.PriorityQueue
 import kotlin.math.abs
+import kotlin.math.max
 import kotlin.math.min
 
 class LeetCodeDebug {
-    fun maximumSafenessFactor(grid: List<List<Int>>): Int {
-        val thieves = findThieves(grid)
-        val safeGrid = setSafeness(grid, thieves)
+    fun predictTheWinner(nums: IntArray): Boolean {
+        val scores = Array(nums.size) {IntArray(nums.size + 1)}
+        val sums = IntArray(nums.size + 1)
 
-        return pathSearch(safeGrid, 0 to 0, (grid.size - 1) to (grid[0].size - 1))
-    }
+        for (i in 1..nums.size) scores[i - 1][i] = nums[i - 1]
+        for (i in 1..nums.size) sums[i] = sums[i - 1] + nums[i - 1]
 
-    fun findThieves(grid: List<List<Int>>): Set<Pair<Int, Int>> {
-        val res = mutableSetOf<Pair<Int, Int>>()
-        for (i in grid.indices) {
-            for (j in 0 until grid[i].size) {
-                if (grid[i][j] == 1) {
-                    res += i to j
-                }
+        for (len in 2..nums.size) {
+            for (l in 0 until nums.size) {
+                val r = l + len
+                if (r > nums.size) break
+                val sum1 = sums[r - 1] - sums[l]
+                val sum2 = sums[r] - sums[l + 1]
+                scores[l][r] = min(
+                    sum2 - scores[l + 1][r] + nums[l],
+                    sum1 - scores[l][r - 1] + nums[r - 1])
             }
         }
 
-        return res
-    }
-
-    fun setSafeness(grid: List<List<Int>>, thieves: Set<Pair<Int, Int>>): List<IntArray> {
-        val res = ArrayList<IntArray>(grid.size)
-            .apply { for (i in grid.indices) add(IntArray(grid[0].size) { Int.MAX_VALUE }) }
-        for (i in grid.indices) {
-            for (j in 0 until grid[0].size) {
-                for ((x, y) in thieves) {
-                    res[i][j] = min(res[i][j], abs(i - x) + abs(j - y))
-                }
-            }
-        }
-
-        return res
-    }
-
-    fun pathSearch(grid: List<IntArray>, start: Pair<Int, Int>, finish: Pair<Int, Int>): Int {
-        val vis = ArrayList<BooleanArray>(grid.size)
-            .apply { for (i in grid.indices) add(BooleanArray(grid[0].size)) }
-
-        val queue = PriorityQueue<Pair<Int, Int>> { (a, b), (x, y) ->
-            grid[x][y] - grid[a][b]
-        }
-        queue.add(start)
-
-        var minMax = Int.MAX_VALUE
-        while (queue.isNotEmpty()) {
-            val (x, y) = queue.remove()
-            minMax = min(minMax, grid[x][y])
-
-            if (finish == x to y) {
-                break
-            }
-            vis[x][y] = true
-
-            queue.addAll(getNeighbours(x to y, grid.size, grid[0].size).filter { (a, b) -> !vis[a][b] }
-                .map { (a, b) -> vis[a][b] = true; a to b })
-        }
-
-        return minMax
-    }
-
-    fun dfs(grid: List<IntArray>, p: Pair<Int, Int>, vis: List<BooleanArray>, fin: Pair<Int, Int>): Int {
-        val (x, y) = p
-
-        if (vis[x][y] || p == fin) {
-            return grid[x][y]
-        }
-
-        vis[x][y] = true
-
-        val safeness = grid[x][y]
-        return min(safeness, getNeighbours(p, grid.size, grid[0].size).maxOf { dfs(grid, it, vis, fin) })
-    }
-
-    fun getNeighbours(p: Pair<Int, Int>, n: Int, m: Int): List<Pair<Int, Int>> {
-        val (x, y) = p
-        return listOf(x + 1 to y, x - 1 to y, x to y + 1, x to y - 1)
-            .filter { (a, b) -> a in 0 until n && b in 0 until m }
+        println(scores.joinToString("\n") { it.joinToString() })
+        val res = scores[0][nums.size] >= max(scores[0][nums.size - 1], scores[1][nums.size])
+        return if (nums.size % 2 == 1) res else !res
     }
 }
 
 
 fun main() {
     val sln = { LeetCodeDebug() }
-    asrt(sln().maximumSafenessFactor(listOf(listOf(0, 1, 1), listOf(0, 1, 1), listOf(1, 1, 1))), 0)
-    asrt(sln().maximumSafenessFactor(listOf(listOf(0, 0, 1), listOf(0, 0, 0), listOf(0, 0, 0))), 2)
-    asrt(sln().maximumSafenessFactor(listOf(listOf(0, 0, 0, 1), listOf(0, 0, 0, 0), listOf(1, 0, 0, 0))), 2)
-}
-
-fun runTest(input: List<List<Int>>, result: Int) {
-    val sln = LeetCodeDebug()
-
-    asrt(sln.maximumSafenessFactor(input), result)
+//    asrt(sln().equalSubstring("thjdoffka", "qhrnlntls", 11), 3)
+    asrt(sln().predictTheWinner(intArrayOf(1, 5, 2)), false)
+    asrt(sln().predictTheWinner(intArrayOf(1, 5, 233,7)), true)
 }
 
 fun asrt(b: Boolean) {
     if (!b) throw java.lang.AssertionError("Failed")
 }
 
-fun asrt(a: Int, b: Int) {
+fun <T>asrt(a: T, b: T) {
     if (a != b) throw AssertionError("Failed: $a got, $b expected")
 }
