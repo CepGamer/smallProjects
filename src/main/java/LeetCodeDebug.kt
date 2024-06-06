@@ -1,3 +1,4 @@
+import java.io.File
 import java.util.PriorityQueue
 import kotlin.math.abs
 import kotlin.math.max
@@ -27,14 +28,30 @@ class LeetCodeDebug {
         val res = scores[0][nums.size] >= max(scores[0][nums.size - 1], scores[1][nums.size])
         return if (nums.size % 2 == 1) res else !res
     }
-}
 
+    fun appendCharacters(s: String, t: String): Int {
+        var (l, r) = 0 to 0
+
+        while (l < s.length && r < t.length) {
+            while (l < s.length && s[l] != t[r]) {
+                l++
+            }
+            l++
+            r++
+        }
+
+        println("$l to $r")
+        println("${s.length} to ${t.length}")
+
+        return (t.length - r + (if (r != t.length) 1 else 0))
+    }
+}
 
 fun main() {
     val sln = { LeetCodeDebug() }
+    val f = File("C:\\Users\\sbolo\\Documents\\smallProjects\\src\\main\\java\\resource.txt").readLines()
 //    asrt(sln().equalSubstring("thjdoffka", "qhrnlntls", 11), 3)
-    asrt(sln().predictTheWinner(intArrayOf(1, 5, 2)), false)
-    asrt(sln().predictTheWinner(intArrayOf(1, 5, 233,7)), true)
+    asrt(sln().appendCharacters(f[0], f[1]), 96063)
 }
 
 fun asrt(b: Boolean) {

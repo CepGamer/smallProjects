@@ -21,24 +21,43 @@ fun runTestC(): String {
     scanner.apply {
         val n = nextInt()
         val a = IntArray(n) { nextInt() }
-        val b = IntArray(n) { nextInt() }
-        val m = nextInt()
-        val d = IntArray(m) { nextInt() }
 
-        if (d.last() !in b) return "NO"
+        if (a.all { it > n }) return "1 ".repeat(n)
 
-        val missing = mutableMapOf<Int, Int>()
-
-        for (i in 0 until n) {
-            if (a[i] != b[i]) missing addOne b[i]
+        val l = a.map(::lcm)
+        val p = IntArray(21)
+        for (i in 2..20) {
+            p[i] = l.maxOf { it[i] }
         }
 
-        for (x in d) {
-            missing remOne x
+        var x = 1L
+        for (i in 2..20) {
+            while (p[i]-- > 0) {
+                x *= i
+            }
         }
+        val lcm = x
+        val b = a.map { lcm / it }
+        val s = b.sum()
 
-        return if (missing.values.all { it <= 0 }) "YES" else "NO"
+        if (lcm <= s) return "-1"
+
+        return b.joinToString(" ")
     }
+}
+
+private fun lcm(a: Int): IntArray {
+    val res = IntArray(21)
+    var x = a
+
+    for (i in 2..20) {
+        while (x % i == 0) {
+            res[i]++
+            x /= i
+        }
+    }
+
+    return res
 }
 
 private infix fun <T> MutableMap<T, Int>.addOne(p: T) {

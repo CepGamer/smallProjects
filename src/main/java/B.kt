@@ -31,44 +31,17 @@ fun initB() {
 
 fun runTestB(T: Int, t: Int): String {
     scanner.apply {
-        val (n, m) = nextLong() to nextLong()
-        val k = nextInt()
+        val (x, y) = nextInt() to nextInt()
 
-        val f = Array(k) { it to (nextLong() to nextLong()) }.sortedBy { it.second.second }.sortedBy { it.second.first }
-        val minRow = LongArray(k + 1)
-        val minCol = LongArray(k + 1)
+        var subseq = 0
+        for (i in 0..31) {
+            val s = 1 shl i
+            val (a, b) = (x and s) to (y and s)
 
-        minRow[k] = n
-        minCol[k] = m + 1
-        minRow[k - 1] = f[k - 1].second.first
-        minCol[k - 1] = f[k - 1].second.second
-
-        for (i in (k - 2) downTo 0) {
-            minRow[i] = min(minRow[i + 1], f[i].second.first)
-            minCol[i] = min(minCol[i + 1], f[i].second.second)
+            if (a == b) subseq++ else break
         }
 
-        val res = LongArray(k)
-        var sum = 0L
-        var prevRow = 0L
-        for (i in 0..k) {
-            val a = if (i < k) f[i].second.first else n
-            sum += (a - prevRow) * (minCol[i] - 1)
-            prevRow = a
-        }
-
-        var curCols = minCol[0]
-        var curA = f[0].second.first
-        for (i in 0 until k) {
-            val (a, b) = f[i].second
-            if (a != curA) {
-                curA = a
-                curCols = b
-            }
-            if (b < minCol[i + 1] && b == curCols) res[f[i].first] = 1
-        }
-
-        return "$sum\n" + res.joinToString(" ")
+        return (1 shl subseq).toString()
     }
 }
 

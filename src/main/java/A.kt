@@ -29,47 +29,15 @@ fun init(k: Int) {
 
 fun runTest(test: Int, t: Int): String {
     scanner.apply {
-        val (n, m) = nextInt() to nextInt()
+        val n = nextInt()
+        val a = IntArray(n) { nextInt() }
 
-        val a = Array(n) { IntArray(m) { nextInt() } }
-        val b = Array(n) { IntArray(m) { nextInt() } }
-
-        val minRow = IntArray(n) { (0 until m).minOf { i -> a[it][i] } }
-        val minCol = IntArray(m) { (0 until n).minOf { i -> a[i][it] } }
-
-        if (n == 1 || m == 1) return "YES"
-
-        val colsA = HashMap<Int, MutableSet<Int>>(m)
-        val rowsA = HashMap<Int, MutableSet<Int>>(n)
-        for (i in 0 until n) {
-            for (j in 0 until m) {
-                addToSet(colsA, minCol[j], a[i][j])
-                addToSet(rowsA, minRow[i], a[i][j])
-            }
+        var ans = Int.MAX_VALUE
+        for (i in 0 until (n - 1)) {
+            ans = min(ans, max(a[i], a[i + 1]))
         }
 
-        // Check rows
-        for (i in 0 until n) {
-            val x = b[i].minOrNull()!!
-            if (x !in rowsA) return "NO"
-            val row = rowsA[x]!!
-            for (y in b[i]) {
-                if (y !in row) return "NO"
-            }
-        }
-
-        // Check cols
-        for (i in 0 until m) {
-            val x = (0 until n).minOf { b[it][i] }
-            if (x !in colsA) return "NO"
-            val col = colsA[x]!!
-            for (j in 0 until n) {
-                val y = b[j][i]
-                if (y !in col) return "NO"
-            }
-        }
-
-        return "YES"
+        return "${ans - 1}"
     }
 }
 

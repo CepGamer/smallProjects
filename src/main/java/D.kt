@@ -31,37 +31,59 @@ fun D() {
 
 private fun runTestD(T: Int, t: Int): String {
     scanner.apply {
-        val n = nextInt()
-        val a = IntArray(n) { nextInt() }
-        val lcds = IntArray(n - 1)
-        for (i in 1 until n) {
-            lcds[i - 1] = a[i - 1] lcd a[i]
+        val (n, k) = nextInt() to nextInt()
+        nextLine()
+        val s = nextLine()
+
+        var cutoff = -1
+        var l = n - 2
+
+        var last = 1
+        while (l >= 0 && s[l] == s[n - 1]) {
+            last++
+            l--
         }
 
-        val restIsNonDesc = BooleanArray(n - 1)
-        restIsNonDesc[n - 2] = true
-        for (i in n - 3 downTo 0) {
-            if (lcds[i + 1] >= lcds[i]) restIsNonDesc[i] = true
-            else {
-                restIsNonDesc[i] = false
+        if (last > k) return "-1"
+        last %= k
+
+        l = 0
+        while (l < n) {
+            val a = s[l]
+            var r = l
+            while (++r < n && s[r] == a) {
+            }
+            if (r - l != k) {
+                cutoff = l + (k - last)
                 break
             }
+            l += k
         }
 
-        var isNonDesc = true
-        if (restIsNonDesc[1]) return "YES"
+        if (cutoff < 0) return "$k"
 
-        for (i in 1 until (n - 1)) {
-            val x = (a[i - 1] lcd a[i + 1])
-            val leftOk = isNonDesc && (i == 1 || x >= lcds[i - 2])
-            val rightOk = (i == n - 2 || restIsNonDesc[i + 1]) && (i == n - 2 || x <= lcds[i + 1])
-            if (leftOk && rightOk) return "YES"
+        val s1 = s.takeLast(n - cutoff) + s.take(cutoff).reversed()
+        l = 0
+        var a = s1[0]
 
-            if (i > 1 && lcds[i - 1] < lcds[i - 2]) isNonDesc = false
+        while (l < n) {
+            for (i in l until l + k) {
+                if (i >= n || s1[i] != a) return "-1"
+            }
+            l += k
+            a = not(a)
         }
 
-        return if (isNonDesc) "YES" else "NO"
+        return "$cutoff"
 
+    }
+}
+
+private fun not(a: Char): Char {
+    return when (a) {
+        '1' -> '0'
+        '0' -> '1'
+        else -> 'a'
     }
 }
 
