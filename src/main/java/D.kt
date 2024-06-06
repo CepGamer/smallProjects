@@ -18,7 +18,7 @@ private lateinit var divisorByInt: List<Pair<Int, ArrayDeque<Int>>>
 
 private lateinit var dynamic: BooleanArray
 
-fun D() {
+fun main() {
     scanner.apply {
         val T = nextInt()
         nextLine()
@@ -60,7 +60,7 @@ private fun runTestD(T: Int, t: Int): String {
             l += k
         }
 
-        if (cutoff < 0) return "$k"
+        if (cutoff < 0) return "$n"
 
         val s1 = s.takeLast(n - cutoff) + s.take(cutoff).reversed()
         l = 0
