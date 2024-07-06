@@ -1,25 +1,20 @@
-import java.lang.StringBuilder
 import java.util.*
+import kotlin.collections.HashMap
+import kotlin.math.max
+import kotlin.math.min
 
-var enableDebug = false
 private val scanner = Scanner(System.`in`)
 private val size = 100_000 + 10
 
 private var n: Int = 0
-private val N = 5_000 + 1
-private val array = IntArray(N)
-private val count = IntArray(N)
-private val isEqual0 = BooleanArray(N)
-
-val modulo = 1000_000_000L + 7L
-
-val paths = Array(N) { LongArray(N) }
-val times = LongArray(N)
+private val N = 1001
+private val array = IntArray(N) { 1 }
 
 fun A() {
     scanner.apply {
         preInit()
         val T = nextInt()
+        nextLine()
         for (TEST in 1..T) {
             println(runTest(TEST, T))
         }
@@ -34,20 +29,22 @@ fun init(k: Int) {
 
 fun runTest(test: Int, t: Int): String {
     scanner.apply {
-        val a = nextLong()
-        val b = nextLong()
+        val n = nextInt()
+        val a = IntArray(n) { nextInt() }
 
-        if (b == 1L) {
-            return "NO"
+        var ans = Int.MAX_VALUE
+        for (i in 0 until (n - 1)) {
+            ans = min(ans, max(a[i], a[i + 1]))
         }
 
-        val res = LongArray(3)
-        res[0] = a * b
-        res[1] = a
-        res[2] = res[0] + res[1]
-        return "YES\n" + res.joinToString(" ") + "\n"
+        return "${ans - 1}"
     }
 }
 
-fun solve(heights: IntArray, k: Int) {
+private fun addToSet(map: MutableMap<Int, MutableSet<Int>>, i: Int, to: Int) {
+    if (i !in map) {
+        map[i] = mutableSetOf(to)
+    } else {
+        map[i]!!.add(to)
+    }
 }

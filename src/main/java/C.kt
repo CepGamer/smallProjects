@@ -1,49 +1,77 @@
-import java.lang.StringBuilder
 import java.util.*
-import kotlin.collections.ArrayDeque
 import kotlin.collections.HashMap
-import kotlin.collections.HashSet
 import kotlin.math.max
+import kotlin.math.min
 
 private val scanner = Scanner(System.`in`)
-private val size = 100_000 + 10
 
-private val count = HashMap<Int, Int>()
 private lateinit var arr: IntArray
-
-private var n: Int = 0
-
-private var map = HashMap<Int, Int>()
 
 fun C() {
     scanner.apply {
-        preInitC()
         val T = nextInt()
+        nextLine()
         for (TEST in 1..T) {
-            initC()
             println(runTestC())
         }
     }
 }
 
-fun preInitC() {
-}
-
-fun initC() {
-    count.clear()
-}
-
 fun runTestC(): String {
     scanner.apply {
-        n = nextInt()
-        val res = IntArray(n)
-        val set = HashSet<Int>()
+        val n = nextInt()
+        val a = IntArray(n) { nextInt() }
 
+        if (a.all { it > n }) return "1 ".repeat(n)
 
+        val l = a.map(::lcm)
+        val p = IntArray(21)
+        for (i in 2..20) {
+            p[i] = l.maxOf { it[i] }
+        }
 
-        return ""
+        var x = 1L
+        for (i in 2..20) {
+            while (p[i]-- > 0) {
+                x *= i
+            }
+        }
+        val lcm = x
+        val b = a.map { lcm / it }
+        val s = b.sum()
+
+        if (lcm <= s) return "-1"
+
+        return b.joinToString(" ")
     }
 }
 
-fun solveC(str: String) {
+private fun lcm(a: Int): IntArray {
+    val res = IntArray(21)
+    var x = a
+
+    for (i in 2..20) {
+        while (x % i == 0) {
+            res[i]++
+            x /= i
+        }
+    }
+
+    return res
+}
+
+private infix fun <T> MutableMap<T, Int>.addOne(p: T) {
+    if (p in this) {
+        this[p] = this[p]!! + 1
+    } else {
+        this[p] = 1
+    }
+}
+
+private infix fun <T> MutableMap<T, Int>.remOne(p: T) {
+    if (p in this) {
+        this[p] = this[p]!! - 1
+    } else {
+        this[p] = -1
+    }
 }
