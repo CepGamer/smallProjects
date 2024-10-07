@@ -1,5 +1,7 @@
 import java.util.*
 import kotlin.collections.HashMap
+import kotlin.io.path.ExperimentalPathApi
+import kotlin.io.path.appendBytes
 import kotlin.math.max
 import kotlin.math.min
 
@@ -27,17 +29,20 @@ fun preInit() {
 fun init(k: Int) {
 }
 
+@OptIn(ExperimentalPathApi::class)
 fun runTest(test: Int, t: Int): String {
     scanner.apply {
-        val n = nextInt()
-        val a = IntArray(n) { nextInt() }
-
-        var ans = Int.MAX_VALUE
-        for (i in 0 until (n - 1)) {
-            ans = min(ans, max(a[i], a[i + 1]))
+        val file = kotlin.io.path.createTempFile()
+        var number = 1
+        val arr = IntArray(1000)
+        for (i in 1..1_000_000) {
+            for (j in 1..1000) {
+                arr[j - 1] = number++
+            }
+            file.appendBytes("$i ".toByteArray())
         }
 
-        return "${ans - 1}"
+        return file.toAbsolutePath().toString()
     }
 }
 

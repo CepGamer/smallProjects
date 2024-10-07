@@ -1,63 +1,132 @@
 import java.io.File
-import java.util.PriorityQueue
-import kotlin.math.abs
-import kotlin.math.max
-import kotlin.math.min
+import java.util.*
+import kotlin.collections.HashMap
 
 class LeetCodeDebug {
-    fun predictTheWinner(nums: IntArray): Boolean {
-        val scores = Array(nums.size) {IntArray(nums.size + 1)}
-        val sums = IntArray(nums.size + 1)
+    lateinit var s: String
+    var i = 0
 
-        for (i in 1..nums.size) scores[i - 1][i] = nums[i - 1]
-        for (i in 1..nums.size) sums[i] = sums[i - 1] + nums[i - 1]
+    val stack = mutableListOf<Int>()
+    val opStack = mutableListOf<Char>()
 
-        for (len in 2..nums.size) {
-            for (l in 0 until nums.size) {
-                val r = l + len
-                if (r > nums.size) break
-                val sum1 = sums[r - 1] - sums[l]
-                val sum2 = sums[r] - sums[l + 1]
-                scores[l][r] = min(
-                    sum2 - scores[l + 1][r] + nums[l],
-                    sum1 - scores[l][r - 1] + nums[r - 1])
-            }
-        }
-
-        println(scores.joinToString("\n") { it.joinToString() })
-        val res = scores[0][nums.size] >= max(scores[0][nums.size - 1], scores[1][nums.size])
-        return if (nums.size % 2 == 1) res else !res
+    fun calculate(s: String): Int {
+        this.s = s
+        return process()
     }
 
-    fun appendCharacters(s: String, t: String): Int {
-        var (l, r) = 0 to 0
-
-        while (l < s.length && r < t.length) {
-            while (l < s.length && s[l] != t[r]) {
-                l++
+    private fun process(): Int {
+        var start = true
+        while (i < s.length) {
+            while (i < s.length && s[i] == ' ') i++
+            if (i >= s.length) break
+            when (s[i]) {
+                '-', '+', '(' -> {
+                    if (start && s[i] == '-') opStack.add('u')
+                    else {
+                        start = s[i] == '('
+                        opStack.add(s[i])
+                    }
+                    i++
+                }
+                ')' -> {
+                    start = false
+                    opStack.removeLast()
+                    i++
+                    processOps()
+                }
+                else -> {
+                    start = false
+                    stack.add(getNumber())
+                    processOps()
+                }
             }
-            l++
-            r++
         }
 
-        println("$l to $r")
-        println("${s.length} to ${t.length}")
+        return stack.removeLast()
+    }
+    fun findSubstring(s: String, words: Array<String>): List<Int> {
+        val winSize = 30
+        val window = Array(winSize) { mutableSetOf<Int>() }
+        val hash = words.groupBy { it }.mapValues { (_, v)  -> v.size }
+        val res = mutableListOf<Int>()
+        val offset = words[0].length * words.size
 
-        return (t.length - r + (if (r != t.length) 1 else 0))
+        for (i in 0 until s.length) {
+            if (i + offset >= s.length) break
+
+            val set = hash.toMutableMap()
+            for (j in 1..words.size) {
+                val sub = s.substring(i + (j - 1) * words[0].length, i + j * words[0].length)
+                if (sub in set) {
+                    if (set[sub] == 1) {
+                        set.remove(sub)
+                    } else {
+                        set[sub]--
+                    }
+                } else {
+                    break
+                }
+            }
+
+            if (set.isEmpty()) res.add(i)
+        }
+
+        return res
+    }
+
+    private fun processOps() {
+        while (opStack.isNotEmpty()) {
+            val op = opStack.removeLast()
+            when(op) {
+                '+' -> {
+                    stack.add(stack.removeLast() + stack.removeLast())
+                }
+                '-' -> stack.add(-stack.removeLast() + stack.removeLast())
+                '(' -> {
+                    opStack.add('(')
+                    return
+                }
+            }
+        }
+    }
+
+    private fun getNumber(): Int {
+        var x = 0
+        while (i < s.length && s[i] in '0'..'9') {
+            x *= 10
+            x += s[i] - '0'
+            i++
+        }
+
+        return x
     }
 }
 
 fun main() {
     val sln = { LeetCodeDebug() }
+    println(sln().calculate("(1+(4+5+2)-3)+(6+8)"))
+}
+
+private fun parse() {
     val f = File("C:\\Users\\sbolo\\Documents\\smallProjects\\src\\main\\java\\resource.txt").readLines()
 //    asrt(sln().equalSubstring("thjdoffka", "qhrnlntls", 11), 3)
-    asrt(sln().appendCharacters(f[0], f[1]), 96063)
+    val arr = Regex("""\[(\d+),\s?(\d+)]""")
+        .findAll(f[0])
+        .map { res ->
+            res.destructured.toList()
+                .map {
+                    it.toInt()
+                }
+                .take(2)
+                .toIntArray()
+        }
+        .toList().toTypedArray()
 }
 
 fun asrt(b: Boolean) {
     if (!b) throw java.lang.AssertionError("Failed")
 }
 
-fun <T>asrt(a: T, b: T) {
+fun <T> asrt(a: T, b: T) {
     if (a != b) throw AssertionError("Failed: $a got, $b expected")
 }
