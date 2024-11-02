@@ -2,6 +2,7 @@ import java.util.*
 import kotlin.collections.HashMap
 import kotlin.io.path.ExperimentalPathApi
 import kotlin.io.path.appendBytes
+import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
 
@@ -32,17 +33,18 @@ fun init(k: Int) {
 @OptIn(ExperimentalPathApi::class)
 fun runTest(test: Int, t: Int): String {
     scanner.apply {
-        val s = nextLine()
-        val t = nextLine()
-        var res = 0
-        for (i in 0 until min(s.length, t.length)) {
-            if (s[i] != t[i]) {
-                break
+        val n = nextInt()
+        var prev = nextInt()
+        var res = true
+        for (i in 1 until n) {
+            val a = nextInt()
+            if (abs(a - prev) !in listOf(5, 7)) {
+                res = false
             }
-            res++
+            prev = a
         }
 
-        return "${s.length + t.length - max(0, res - 1)}"
+        return if (res) "YES" else "NO"
     }
 }
 

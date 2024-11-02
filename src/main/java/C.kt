@@ -19,37 +19,54 @@ fun C() {
 
 fun runTestC(): String {
     scanner.apply {
-        val n = nextInt()
-        val k = nextInt()
+        val s = StringBuilder(nextLine())
+        val n = s.length
+        val q = nextInt()
 
-        val arr = IntArray(n) { nextInt() }
-        arr.sort()
-        var maxSum = IntArray(k)
-        var l = 0
-        var i = 0
-        var a = arr[0]
-        var res = 0
-        var sum = 0
-        var cursum = 0
-        while (i < n) {
-            if (arr[i] > a + 1) {
-                sum = 0
-                cursum = 0
+        val current = HashSet<Int>()
+        for (i in 0 until n - 3) {
+            if (s.substring(i..i + 3) == "1100") {
+                current += i
             }
-            a = arr[i]
-            var r = 0
-            while (i < n && arr[i] == a) {
-                r++
-                i++
-            }
-            sum += r
-            if (cursum++ >= k) {
-                sum -= maxSum[l]
-            }
-            maxSum[l] = r
-            l = (l + 1) % k
-            res = max(sum, res)
         }
+
+        val res = StringBuilder()
+        for (i in 0 until q) {
+            val (j, v) = nextInt() - 1 to nextInt().toString()[0]
+            if (s[j] != v) {
+                s[j] = v
+                if (v == '1') {
+                    current.remove(j - 1)
+                    current.remove(j - 2)
+                    current.remove(j - 3)
+                    for (k in -1..1) {
+                        val p = j + k
+                        if (p < 0 || (p + 3) >= n) continue
+                        if (s.substring(p..p + 3) == "1100") {
+                            current += p
+                            break
+                        }
+                    }
+                } else {
+                    current.remove(j)
+                    current.remove(j - 1)
+                    current.remove(j + 1)
+                    for (k in -3..-1) {
+                        val p = j + k
+                        if (p < 0 || (p + 3) >= n) continue
+                        if (s.substring(p..p + 3) == "1100") {
+                            current += p
+                            break
+                        }
+                    }
+                }
+            }
+            res.append(if (current.isNotEmpty()) {
+                 "YES"
+            } else "NO")
+            res.append("\n")
+        }
+        nextLine()
 
         return res.toString()
     }

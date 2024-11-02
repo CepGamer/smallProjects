@@ -12,11 +12,6 @@ var debug = false
 
 fun B() {
     scanner.apply {
-        if (true) {
-            println(runTestB(0, 0))
-            return
-        }
-
         val T = nextInt()
         nextLine()
 
@@ -37,17 +32,20 @@ fun initB() {
 
 fun runTestB(T: Int, t: Int): String {
     scanner.apply {
-        // FIX B()
-        val n = nextInt()
-        val arrA = IntArray(n) { nextInt() }
-        val arrB = IntArray(n) { nextInt() }
-        val slider = LongArray(size)
-        slider[0] = 1
-        for (i in 1 until size) {
-            slider[i] = (slider[i - 1] shl 1) % modulo
+        val (n, k) = nextInt() to nextInt()
+        val res = IntArray(k + 1)
+        for (i in 0 until k) {
+            val (b, c) = nextInt() to nextInt()
+            res[b] += c
+        }
+        res.sortDescending()
+
+        var rr = 0L
+        for (i in 0 until min(n, k)) {
+            rr += res[i]
         }
 
-        return arrB.joinToString("\n") { slider[it].toString() }
+        return rr.toString()
     }
 }
 
