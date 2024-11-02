@@ -20,29 +20,38 @@ fun C() {
 fun runTestC(): String {
     scanner.apply {
         val n = nextInt()
-        val a = IntArray(n) { nextInt() }
+        val k = nextInt()
 
-        if (a.all { it > n }) return "1 ".repeat(n)
-
-        val l = a.map(::lcm)
-        val p = IntArray(21)
-        for (i in 2..20) {
-            p[i] = l.maxOf { it[i] }
-        }
-
-        var x = 1L
-        for (i in 2..20) {
-            while (p[i]-- > 0) {
-                x *= i
+        val arr = IntArray(n) { nextInt() }
+        arr.sort()
+        var maxSum = IntArray(k)
+        var l = 0
+        var i = 0
+        var a = arr[0]
+        var res = 0
+        var sum = 0
+        var cursum = 0
+        while (i < n) {
+            if (arr[i] > a + 1) {
+                sum = 0
+                cursum = 0
             }
+            a = arr[i]
+            var r = 0
+            while (i < n && arr[i] == a) {
+                r++
+                i++
+            }
+            sum += r
+            if (cursum++ >= k) {
+                sum -= maxSum[l]
+            }
+            maxSum[l] = r
+            l = (l + 1) % k
+            res = max(sum, res)
         }
-        val lcm = x
-        val b = a.map { lcm / it }
-        val s = b.sum()
 
-        if (lcm <= s) return "-1"
-
-        return b.joinToString(" ")
+        return res.toString()
     }
 }
 

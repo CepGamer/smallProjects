@@ -3,7 +3,8 @@ import java.util.*
 import kotlin.math.min
 
 private val scanner = Scanner(System.`in`)
-private val size = 100_000 + 10
+private val size = 100_000 + 1
+val modulo = 1_000_000_000 + 7
 
 private var n: Int = 0
 
@@ -11,6 +12,11 @@ var debug = false
 
 fun B() {
     scanner.apply {
+        if (true) {
+            println(runTestB(0, 0))
+            return
+        }
+
         val T = nextInt()
         nextLine()
 
@@ -31,17 +37,17 @@ fun initB() {
 
 fun runTestB(T: Int, t: Int): String {
     scanner.apply {
-        val (x, y) = nextInt() to nextInt()
-
-        var subseq = 0
-        for (i in 0..31) {
-            val s = 1 shl i
-            val (a, b) = (x and s) to (y and s)
-
-            if (a == b) subseq++ else break
+        // FIX B()
+        val n = nextInt()
+        val arrA = IntArray(n) { nextInt() }
+        val arrB = IntArray(n) { nextInt() }
+        val slider = LongArray(size)
+        slider[0] = 1
+        for (i in 1 until size) {
+            slider[i] = (slider[i - 1] shl 1) % modulo
         }
 
-        return (1 shl subseq).toString()
+        return arrB.joinToString("\n") { slider[it].toString() }
     }
 }
 
@@ -87,18 +93,3 @@ class FastScanner {
         `in` = BufferedInputStream(System.`in`, BS)
     }
 }
-
-/*
-1
-2 5 9
-1 2
-1 5
-1 1
-2 2
-2 4
-2 5
-1 4
-2 3
-1 3
-
- */

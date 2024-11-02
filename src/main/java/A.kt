@@ -32,17 +32,17 @@ fun init(k: Int) {
 @OptIn(ExperimentalPathApi::class)
 fun runTest(test: Int, t: Int): String {
     scanner.apply {
-        val file = kotlin.io.path.createTempFile()
-        var number = 1
-        val arr = IntArray(1000)
-        for (i in 1..1_000_000) {
-            for (j in 1..1000) {
-                arr[j - 1] = number++
+        val s = nextLine()
+        val t = nextLine()
+        var res = 0
+        for (i in 0 until min(s.length, t.length)) {
+            if (s[i] != t[i]) {
+                break
             }
-            file.appendBytes("$i ".toByteArray())
+            res++
         }
 
-        return file.toAbsolutePath().toString()
+        return "${s.length + t.length - max(0, res - 1)}"
     }
 }
 

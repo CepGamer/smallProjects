@@ -61,7 +61,7 @@ class LeetCodeDebug {
                     if (set[sub] == 1) {
                         set.remove(sub)
                     } else {
-                        set[sub]--
+                        set[sub]
                     }
                 } else {
                     break

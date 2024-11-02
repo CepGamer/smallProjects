@@ -20,6 +20,10 @@ private lateinit var dynamic: BooleanArray
 
 fun D() {
     scanner.apply {
+        if (true) {
+            println(runTestD(0, 0))
+            return
+        }
         val T = nextInt()
         nextLine()
 
@@ -31,50 +35,48 @@ fun D() {
 
 private fun runTestD(T: Int, t: Int): String {
     scanner.apply {
-        val (n, k) = nextInt() to nextInt()
+        val (n, m) = nextInt() to nextInt()
         nextLine()
-        val s = nextLine()
-
-        var cutoff = -1
-        var l = n - 2
-
-        var last = 1
-        while (l >= 0 && s[l] == s[n - 1]) {
-            last++
-            l--
+        val dp = IntArray(m + 1)
+        val c = IntArray(m + 1)
+        val d = IntArray(m + 1)
+        var i = 0
+        for (j in 0 until n) {
+            val a = nextInt()
+            if (a == 0) {
+                i++
+                dp[i] = dp[i - 1]
+                var cs = c.sum()
+                for (k in 0 until i) {
+                    dp[k] += cs
+                    dp[k] += d[k]
+                    cs -= c[k]
+                }
+                var prev = dp[0]
+                for (k in 1 until i) {
+                    val t = dp[k]
+                    dp[k] = max(prev, dp[k])
+                    prev = t
+                }
+                for (k in 0..i) {
+                    c[k] = 0
+                    d[k] = 0
+                }
+            } else if (a in -i..-1) {
+                c[i + a]++
+            } else if (a in 1..i) {
+                d[a]++
+            }
         }
 
-        if (last > k) return "-1"
-        last %= k
-
-        l = 0
-        while (l < n) {
-            val a = s[l]
-            var r = l
-            while (++r < n && s[r] == a) {
-            }
-            if (r - l != k) {
-                cutoff = l + (k - last)
-                break
-            }
-            l += k
+        var cs = c.sum()
+        for (k in 0 until i) {
+            dp[k] += cs
+            dp[k] += d[k]
+            cs -= c[k]
         }
 
-        if (cutoff < 0) return "$n"
-
-        val s1 = s.takeLast(n - cutoff) + s.take(cutoff).reversed()
-        l = 0
-        var a = s1[0]
-
-        while (l < n) {
-            for (i in l until l + k) {
-                if (i >= n || s1[i] != a) return "-1"
-            }
-            l += k
-            a = not(a)
-        }
-
-        return "$cutoff"
+        return dp.max().toString()
 
     }
 }
