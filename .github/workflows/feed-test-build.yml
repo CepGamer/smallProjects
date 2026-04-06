@@ -1,0 +1,49 @@
+name: Feed Test Android Build
+
+on:
+  push:
+    branches: [ master, "claude/**" ]
+    paths:
+      - 'feed-test/**'
+      - '.github/workflows/feed-test-build.yml'
+  pull_request:
+    paths:
+      - 'feed-test/**'
+
+jobs:
+  build:
+    name: Build Debug APK
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Cache Gradle packages
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: gradle-${{ hashFiles('feed-test/**/*.gradle', 'feed-test/gradle/wrapper/gradle-wrapper.properties') }}
+          restore-keys: gradle-
+
+      - name: Make gradlew executable
+        run: chmod +x feed-test/gradlew
+
+      - name: Build debug APK
+        working-directory: feed-test
+        run: ./gradlew assembleDebug --no-daemon
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: debug-apk
+          path: feed-test/app/build/outputs/apk/debug/*.apk
+          retention-days: 7
