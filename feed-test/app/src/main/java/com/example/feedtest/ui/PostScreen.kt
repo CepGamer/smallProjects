@@ -3,6 +3,7 @@ package com.example.feedtest.ui
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,6 +20,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -28,21 +30,20 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.feedtest.data.Person
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PeopleScreen(viewModel: PeopleViewModel = viewModel()) {
+fun PeopleScreen(viewModel: PeopleViewModel) {
     val uiState by viewModel.uiState.collectAsState()
     val listState = rememberLazyListState()
 
-    // Load next page when near the end
+    // Trigger next page load when near the bottom
     val shouldLoadMore by remember {
         derivedStateOf {
             val lastVisible = listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
-            val totalItems = listState.layoutInfo.totalItemsCount
-            lastVisible >= totalItems - 3
+            val total = listState.layoutInfo.totalItemsCount
+            total > 0 && lastVisible >= total - 3
         }
     }
     LaunchedEffect(shouldLoadMore) {
@@ -50,50 +51,49 @@ fun PeopleScreen(viewModel: PeopleViewModel = viewModel()) {
     }
 
     Scaffold(
-        topBar = {
-            TopAppBar(title = { Text("SWAPI People") })
-        }
+        topBar = { TopAppBar(title = { Text("SWAPI People") }) }
     ) { padding ->
-        Box(
+        PullToRefreshBox(
+            isRefreshing = uiState.isLoading,
+            onRefresh = { viewModel.refresh() },
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
         ) {
-            when (val state = uiState) {
-                is PeopleUiState.Loading -> {
-                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+            when {
+                uiState.isLoading && uiState.people.isEmpty() -> {
+                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        CircularProgressIndicator()
+                    }
                 }
-                is PeopleUiState.Success -> {
+                uiState.error != null && uiState.people.isEmpty() -> {
+                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            Text("Error: ${uiState.error}")
+                            Button(onClick = { viewModel.refresh() }) { Text("Retry") }
+                        }
+                    }
+                }
+                else -> {
                     LazyColumn(
                         state = listState,
                         modifier = Modifier.fillMaxSize(),
                         verticalArrangement = Arrangement.spacedBy(8.dp),
-                        contentPadding = androidx.compose.foundation.layout.PaddingValues(16.dp)
+                        contentPadding = PaddingValues(16.dp)
                     ) {
-                        items(state.people, key = { it.url }) { person ->
+                        items(uiState.people, key = { it.url }) { person ->
                             PersonCard(person)
                         }
-                        if (state.hasMore) {
+                        if (uiState.isLoadingMore) {
                             item {
                                 Box(
-                                    modifier = Modifier.fillMaxWidth().padding(8.dp),
+                                    Modifier.fillMaxWidth().padding(8.dp),
                                     contentAlignment = Alignment.Center
-                                ) {
-                                    CircularProgressIndicator()
-                                }
+                                ) { CircularProgressIndicator() }
                             }
-                        }
-                    }
-                }
-                is PeopleUiState.Error -> {
-                    Column(
-                        modifier = Modifier.align(Alignment.Center),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        Text(text = "Error: ${state.message}")
-                        Button(onClick = { viewModel.fetchPeople() }) {
-                            Text("Retry")
                         }
                     }
                 }
@@ -109,10 +109,7 @@ fun PersonCard(person: Person) {
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Text(
-                text = person.name,
-                style = MaterialTheme.typography.titleMedium
-            )
+            Text(person.name, style = MaterialTheme.typography.titleMedium)
             Row(
                 modifier = Modifier.padding(top = 6.dp).fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
@@ -137,14 +134,7 @@ fun PersonCard(person: Person) {
 @Composable
 fun LabeledValue(label: String, value: String) {
     Column {
-        Text(
-            text = label,
-            style = MaterialTheme.typography.labelSmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-        Text(
-            text = value,
-            style = MaterialTheme.typography.bodySmall
-        )
+        Text(label, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        Text(value, style = MaterialTheme.typography.bodySmall)
     }
 }
