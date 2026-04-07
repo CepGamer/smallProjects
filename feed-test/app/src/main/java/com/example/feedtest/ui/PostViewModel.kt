@@ -1,9 +1,13 @@
 package com.example.feedtest.ui
 
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.feedtest.data.AppDatabase
 import com.example.feedtest.data.Person
 import com.example.feedtest.data.RetrofitClient
+import com.example.feedtest.data.toEntity
+import com.example.feedtest.data.toPerson
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -14,11 +18,12 @@ sealed class PeopleUiState {
     data class Error(val message: String) : PeopleUiState()
 }
 
-class PeopleViewModel : ViewModel() {
+class PeopleViewModel(application: Application) : AndroidViewModel(application) {
+    private val dao = AppDatabase.getInstance(application).personDao()
+
     private val _uiState = MutableStateFlow<PeopleUiState>(PeopleUiState.Loading)
     val uiState: StateFlow<PeopleUiState> = _uiState
 
-    private val _people = mutableListOf<Person>()
     private var currentPage = 1
     private var isLoadingMore = false
 
@@ -27,7 +32,6 @@ class PeopleViewModel : ViewModel() {
     }
 
     fun fetchPeople() {
-        _people.clear()
         currentPage = 1
         _uiState.value = PeopleUiState.Loading
         loadPage()
@@ -46,9 +50,11 @@ class PeopleViewModel : ViewModel() {
         viewModelScope.launch {
             try {
                 val response = RetrofitClient.instance.getPeople(currentPage)
-                _people.addAll(response.results)
+                if (currentPage == 1) dao.clearAll()
+                dao.insertAll(response.results.map { it.toEntity() })
+                val people = dao.getAllPeople().map { it.toPerson() }
                 _uiState.value = PeopleUiState.Success(
-                    people = _people.toList(),
+                    people = people,
                     hasMore = response.next != null
                 )
             } catch (e: Exception) {
