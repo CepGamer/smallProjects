@@ -36,7 +36,6 @@ fun runTestC(): String {
             if (s[j] != v) {
                 s[j] = v
                 if (v == '1') {
-                    current.remove(j - 1)
                     current.remove(j - 2)
                     current.remove(j - 3)
                     for (k in -1..1) {
@@ -50,7 +49,6 @@ fun runTestC(): String {
                 } else {
                     current.remove(j)
                     current.remove(j - 1)
-                    current.remove(j + 1)
                     for (k in -3..-1) {
                         val p = j + k
                         if (p < 0 || (p + 3) >= n) continue

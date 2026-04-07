@@ -16,11 +16,12 @@ private val array = IntArray(N) { 1 }
 fun A() {
     scanner.apply {
         preInit()
-        val T = nextInt()
-        nextLine()
-        for (TEST in 1..T) {
-            println(runTest(TEST, T))
-        }
+//        val T = nextInt()
+//        nextLine()
+//        for (TEST in 1..T) {
+//            println(runTest(TEST, T))
+//        }
+        println(runTest(0, 0))
     }
 }
 
@@ -31,21 +32,59 @@ fun init(k: Int) {
 }
 
 @OptIn(ExperimentalPathApi::class)
-fun runTest(test: Int, t: Int): String {
-    scanner.apply {
-        val n = nextInt()
-        var prev = nextInt()
-        var res = true
-        for (i in 1 until n) {
-            val a = nextInt()
-            if (abs(a - prev) !in listOf(5, 7)) {
-                res = false
-            }
-            prev = a
+fun runTest(test: Int, t: Int): String = scanner.run {
+    val n = nextInt()
+    val k = nextInt()
+    val q = nextInt()
+    val countries = Array(n) { IntArray(k) { nextInt() } }
+    for (i in 1 until n) {
+        for (j in 0 until k) {
+            countries[i][j] = countries[i - 1][j] or countries[i][j]
         }
-
-        return if (res) "YES" else "NO"
     }
+
+    val res = StringBuilder()
+    for (x in 0 until q) {
+        val m = nextInt()
+        var (rx, ry) = 0 to n - 1
+        for (i in 0 until m) {
+            val a = nextInt() - 1
+            val sign = next("[<>]")
+            val b = nextInt()
+            if (sign == ">") {
+                var l = -1
+                var r = n
+                while (l + 1 < r) {
+                    val m = (l + r) ushr 1
+                    if (countries[m][a] > b) {
+                        r = m
+                    } else {
+                        l = m
+                    }
+                }
+
+                rx = max(rx, r)
+            } else {
+                var l = -1
+                var r = n
+                while (l + 1 < r) {
+                    val m = (l + r) ushr 1
+                    if (countries[m][a] >= b) {
+                        r = m
+                    } else {
+                        l = m
+                    }
+                }
+                ry = min(ry, r - 1)
+            }
+        }
+        res.append(if (rx <= ry) {
+            (rx + 1).toString()
+        } else "-1")
+        res.append("\n")
+    }
+
+    res.toString()
 }
 
 private fun addToSet(map: MutableMap<Int, MutableSet<Int>>, i: Int, to: Int) {
